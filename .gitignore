@@ -64,6 +64,7 @@ target/
 *.rdb
 
 # Pycharm
+*.idea
 .idea
 
 # Mac
