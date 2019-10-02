@@ -9,7 +9,7 @@ setup(name='pocr',
       license='MIT',
       packages=['pocr'],
       entry_points={
-          'console_scripts': ['pocr=pocr.command_line:main'],
+          'console_scripts': ['pocr=pocr.runMe:entry_point'],
       },
-      install_requires=['keyring'],
+      install_requires=['keyring', 'pyyaml'],
       zip_safe=False)

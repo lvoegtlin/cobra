@@ -1,0 +1,5 @@
+---
+# github
+Github:
+  http-base: "https://github.com/"
+  ssh-base: "git@github.com:"
