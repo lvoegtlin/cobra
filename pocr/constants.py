@@ -16,5 +16,5 @@ class Constants:
 
     # ------------------------
 
-    VCS_SELECT_TEXT = "Chose the vcs you want to use (for all projects)"
+    VCS_SELECT_TEXT = "Chose the vcs hoster you want to use (for all projects)"
     CON_SELECT_TEXT = "Select the connection type:"

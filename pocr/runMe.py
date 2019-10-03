@@ -2,12 +2,12 @@ from __future__ import print_function, unicode_literals
 from pocr.conf.settings import Settings
 from pocr.constants import Constants
 from pocr.utils.command_line import get_params
+from pocr.utils.utils import get_object_from_list_by_name, ask_questions
 
-import os
+import subprocess
 import shutil
 import sys
-
-from pocr.utils.utils import get_object_from_list_by_name, build_question, ask_questions
+import os
 
 
 class POCR:
@@ -93,6 +93,8 @@ class POCR:
 
 def entry_point():
     POCR().main()
+    # TODO for testing
+    subprocess.run("./pocr/clean.sh", shell=True)
 
 
 if __name__ == '__main__':
