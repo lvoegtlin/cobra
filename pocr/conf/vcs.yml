@@ -1,5 +1,6 @@
 ---
 # github
 Github:
-  http-base: "https://github.com/"
-  ssh-base: "git@github.com:"
+  connection_types:
+    https: "https://github.com/"
+    ssh: "git@github.com:"

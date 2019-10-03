@@ -1,10 +1,13 @@
+from __future__ import print_function, unicode_literals
+from pocr.conf.settings import Settings
+from pocr.constants import Constants
+from pocr.utils.command_line import get_params
+
 import os
 import shutil
 import sys
 
-from pocr.conf.settings import Settings
-from pocr.constants import Constants
-from pocr.utils.command_line import get_params
+from pocr.utils.utils import get_object_from_list_by_name, build_question, ask_questions
 
 
 class POCR:
@@ -42,26 +45,28 @@ class POCR:
 
     # install wizard
     def run_installation(self):
-        # create files
+        """
+        With this method the user installs the tool. That means he creates the config and the project file,
+        enters the user credentials as well as defines the connection type.
+        """
+
+        # ask for the vcs which are stored in the vc.yml file
+        vcs_selection = ask_questions([Settings.getInstance().vcses], [Constants.VCS_SELECT_TEXT], ['vcs'])
+        used_vcs = Settings.getInstance().used_vcs = get_object_from_list_by_name(vcs_selection['vcs'],
+                                                                                  Settings.getInstance().vcses)
+
+        # finish vcs install (ssh http selection; TODO: username and password or token)
+        con_selection = ask_questions([used_vcs.connection_types], [Constants.CON_SELECT_TEXT], ['con_type'])
+        Settings.getInstance().connection_type = get_object_from_list_by_name(con_selection['con_type'],
+                                                                              used_vcs.connection_types)
+
+        # create files and folders
+        self.create_files_folders()
 
         # TODO create git hook (conda list -r --json -> returns json with the revision)
 
-        print("Chose the vcs you want to use (for all projects)")
-        vcs_selection = ""
-        while type(vcs_selection) is not int:
-            for i, vcs in enumerate(Settings.getInstance().vcses):
-                print("{}) {}".format(i, vcs.name))
-            try:
-                vcs_selection = int(input("select: "))
-            except ValueError:
-                print("Please enter an integer")
-        Settings.getInstance().used_vcs = vcs_selection
-
-        # finish vcs install (ssh http selection; username and password or token)
-
-        self.create_files_folders()
-
         # save infos
+        Settings.getInstance().save_config()
         pass
 
     def create_files_folders(self):
@@ -81,6 +86,10 @@ class POCR:
         if sys.version_info[0] < 3 and sys.version_info[1] < 5:
             raise Exception("The default python version is lower then 3.5. Please update!")
 
+
+    def create_project(self):
+        # save in the project file the revision date
+        pass
 
 def entry_point():
     POCR().main()

@@ -13,3 +13,8 @@ class Constants:
                  'username': None,
                  'token_domain': None,
                  'password_domain': None}
+
+    # ------------------------
+
+    VCS_SELECT_TEXT = "Chose the vcs you want to use (for all projects)"
+    CON_SELECT_TEXT = "Select the connection type:"

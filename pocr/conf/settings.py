@@ -1,8 +1,8 @@
 import yaml
 import keyring
 
-from pocr.vcs import VCS
 from pocr.constants import Constants
+from pocr.vcs import VCS
 
 
 class Settings:
@@ -12,11 +12,12 @@ class Settings:
     def __init__(self):
         if Settings.__instance:
             self.getInstance()
-        self._vcses = []
-        self._used_vcs = -1
-        self._connection_type = None
+        self.vcses = []
+        self.used_vcs = None
+        self.connection_type = None
         self.user_password_domain = "pocr_user_pass"
         self.token_domain = "pocr_token"
+        self.username = ''
 
     @classmethod
     def getInstance(cls):
@@ -33,9 +34,9 @@ class Settings:
     def __load_vcs(self):
         with open("./pocr/conf/vcs.yml", 'r') as vcs:
             yaml_file = yaml.safe_load_all(vcs)
-            for vcses in yaml_file:
-                for k, v in vcses.items():
-                    self._vcses.append(VCS(k, v['http-base'], v['ssh-base']))
+            for vcs_list in yaml_file:
+                for k, v in vcs_list.items():
+                    self._vcses.append(VCS(k, v['connection_types']))
 
     @property
     def used_vcs(self):
@@ -57,6 +58,14 @@ class Settings:
     def vcses(self, value):
         self._vcses = value
 
+    @property
+    def username(self):
+        return self._username
+
+    @username.setter
+    def username(self, value):
+        self._username = value
+
     def save_user_cred(self, username, password):
         keyring.set_password(self.user_password_domain, username, password)
 
@@ -70,6 +79,14 @@ class Settings:
         yaml_dict.update(kwargs)
         with open(file_path, 'w') as f:
             yaml.dump(yaml_dict, f)
+
+    def save_config(self):
+        config_dict = {'vcs_name': self.used_vcs,
+                       'connection_type': self.connection_type,
+                       'username': self.username,
+                       'token_domain': self.token_domain,
+                       'password_domain': self.user_password_domain}
+        self.write_into_yaml_file(Constants.CONF_FILE_PATH, **config_dict)
 
 
 if __name__ == '__main__':

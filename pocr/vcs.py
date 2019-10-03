@@ -1,15 +1,33 @@
+from pocr.connenction_types import ConnectionType
+
 
 class VCS:
 
-    def __init__(self, name, ssh_base, http_base):
+    def __init__(self, name, connection_types):
         self.name = name
-        self.ssh_base = ssh_base
-        self.http_base = http_base
+        self.connection_types = self.__init_connection_types(connection_types)
 
 
-    def install(self):
-        # authentication
-        # # enter username and password
-        # # 2FA (check again)
-        # chose http or ssh for git connection
-        pass
+    # GETTERS / SETTERS
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
+
+    def __init_connection_types(self, connection_types):
+        con_type_list = []
+        for name, url in connection_types.items():
+            con_type_list.append(ConnectionType(name, url))
+        return con_type_list
+
+    @property
+    def connection_types(self):
+        return self._connection_types
+
+    @connection_types.setter
+    def connection_types(self, value):
+        self._connection_types = value
