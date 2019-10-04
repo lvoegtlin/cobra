@@ -90,10 +90,11 @@ class Config(yaml.YAMLObject):
                     self._vcses.append(VCS(k, v['connection_types'], v['token_url']))
 
     # PUBLIC
-    def save_user_cred(self, username, sec):
-        self._username = username
-        self._sec = sec
-        keyring.set_password(self.user_password_domain, username, sec)
+    def save_user_cred(self):
+        keyring.set_password(self.user_password_domain, self.username, self.sec)
+
+    def __load_user_cred(self):
+        self._sec = keyring.get_password(self.user_password_domain, self.username)
 
     def save_config(self):
         self.write_into_yaml_file(Constants.CONF_FILE_PATH)
@@ -101,8 +102,12 @@ class Config(yaml.YAMLObject):
     def load_config(self):
         with open(Constants.CONF_FILE_PATH, 'r') as f:
             config = yaml.load(f, Loader=yaml.Loader)
-            for k, v in config.items():
-                self.getInstance()[k] = v
+            self.connection_type = config.connection_type
+            self.used_vcs = config.used_vcs
+            self.username = config.username
+
+            self.__load_vcs()
+            self.__load_user_cred()
 
 
 if __name__ == '__main__':

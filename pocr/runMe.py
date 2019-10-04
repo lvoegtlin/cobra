@@ -35,7 +35,7 @@ class POCR:
             subprocess.run("./pocr/clean.sh", shell=True)
 
     def setup(self):
-        # add constructors to yaml
+        # load config
         Config.getInstance().load_config()
 
     def first_usage(self):
@@ -77,8 +77,9 @@ class POCR:
                                            [Constants.USERNAME_TEXT, Constants.TOKEN_TEXT],
                                            ['username', 'token'],
                                            [[], []])
-            Config.getInstance().sec = username_token['token']
             Config.getInstance().username = username_token['username']
+            Config.getInstance().sec = username_token['token']
+            Config.getInstance().save_user_cred()
         # else
         else:
             username_password = ask_questions(['input', 'password'],
