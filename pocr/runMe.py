@@ -22,17 +22,21 @@ class POCR:
         if self.args.install:
             if self.first_usage():
                 self.run_installation()
+                print('POCR successfully installed!')
+                sys.exit(1)
             else:
                 print("POCR is already installed!")
+                sys.exit(1)
 
-        ## yes, install
-        ### check for programms
-        ### get user info
-        ### save
-        ## no, parse the input
+        # load config
+        self.setup()
 
         if self.args.test:
             subprocess.run("./pocr/clean.sh", shell=True)
+
+    def setup(self):
+        # add constructors to yaml
+        Config.getInstance().load_config()
 
     def first_usage(self):
         """
@@ -73,7 +77,7 @@ class POCR:
                                            [Constants.USERNAME_TEXT, Constants.TOKEN_TEXT],
                                            ['username', 'token'],
                                            [[], []])
-            Config.getInstance().token = username_token['token']
+            Config.getInstance().sec = username_token['token']
             Config.getInstance().username = username_token['username']
         # else
         else:
@@ -102,7 +106,7 @@ class POCR:
 
         # create conf file
         open(Constants.CONF_FILE_PATH, 'a').close()
-        Config.getInstance().write_into_yaml_file(Constants.CONF_FILE_PATH, **Constants.CONF_DICT)
+        # Config.getInstance().write_into_yaml_file(Constants.CONF_FILE_PATH, **Constants.CONF_DICT)
         # project file {'TestProject': {infos}}
         open(Constants.PROJECT_FILE_PATH, 'a').close()
 

@@ -1,8 +1,13 @@
-class ConnectionType:
+import yaml
 
-    def __init__(self, name, url):
-        self.name = name
-        self.url = url
+
+class ConnectionType(yaml.YAMLObject):
+
+    yaml_tag = u'!ConnectionType'
+
+    def __init__(self, _name, _url):
+        self.name = _name
+        self.url = _url
 
     # GETTERS / SETTERS
     @property

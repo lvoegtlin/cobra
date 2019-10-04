@@ -1,12 +1,14 @@
 from pocr.connenction_types import ConnectionType
+import yaml
 
 
-class VCS:
+class VCS(yaml.YAMLObject):
+    yaml_tag = u'!VCS'
 
-    def __init__(self, name, values):
+    def __init__(self, name, connection_types, token_url):
         self.name = name
-        self.connection_types = self.__init_connection_types(values['connection_types'])
-        self.token_create_url = values['token_url']
+        self.connection_types = self.__init_connection_types(connection_types)
+        self.token_create_url = token_url
 
     # GETTERS / SETTERS
 
