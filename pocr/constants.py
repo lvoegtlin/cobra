@@ -18,3 +18,7 @@ class Constants:
 
     VCS_SELECT_TEXT = "Chose the vcs hoster you want to use (for all projects)"
     CON_SELECT_TEXT = "Select the connection type:"
+    USERNAME_TEXT = "Enter your username (of the VCS host)"
+    PASSWORD_TEXT = "Enter your password (of the VCS host)"
+    AUTH_TEXT = "What kind of Authentication do you want to use: (if 2FA chose token)"
+    TOKEN_TEXT = "Enter the token"

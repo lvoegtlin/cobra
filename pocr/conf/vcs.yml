@@ -1,6 +1,7 @@
 ---
 # github
 Github:
+  token_url: "https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line"
   connection_types:
     https: "https://github.com/"
     ssh: "git@github.com:"

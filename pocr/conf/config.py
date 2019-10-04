@@ -5,12 +5,12 @@ from pocr.constants import Constants
 from pocr.vcs import VCS
 
 
-class Settings:
+class Config:
 
     __instance = None
 
     def __init__(self):
-        if Settings.__instance:
+        if Config.__instance:
             self.getInstance()
         self.vcses = []
         self.used_vcs = None
@@ -18,11 +18,13 @@ class Settings:
         self.user_password_domain = "pocr_user_pass"
         self.token_domain = "pocr_token"
         self.username = ''
+        self.token = ''
+        self.password = ''
 
     @classmethod
     def getInstance(cls):
         if cls.__instance is None:
-            cls.__instance = Settings()
+            cls.__instance = Config()
         return cls.__instance
 
     @property
@@ -36,7 +38,7 @@ class Settings:
             yaml_file = yaml.safe_load_all(vcs)
             for vcs_list in yaml_file:
                 for k, v in vcs_list.items():
-                    self._vcses.append(VCS(k, v['connection_types']))
+                    self._vcses.append(VCS(k, v))
 
     @property
     def used_vcs(self):
@@ -66,11 +68,29 @@ class Settings:
     def username(self, value):
         self._username = value
 
+    @property
+    def token(self):
+        return self._token
+
+    @token.setter
+    def token(self, value):
+        self._token = value
+
+    @property
+    def password(self):
+        return self._password
+
+    @password.setter
+    def password(self, value):
+        self._password = value
+
     def save_user_cred(self, username, password):
+        self._username = username
         keyring.set_password(self.user_password_domain, username, password)
 
-    def save_auth_token(self, token):
-        keyring.set_password(self.token_domain, "token", token)
+    def save_auth_token(self, username, token):
+        self._username = username
+        keyring.set_password(self.token_domain, username, token)
 
     def write_into_yaml_file(self, file_path, **kwargs: dict):
         assert kwargs
@@ -90,5 +110,5 @@ class Settings:
 
 
 if __name__ == '__main__':
-    t = Settings.getInstance()
+    t = Config.getInstance()
     t.write_into_config(**{'test': 'test'})
