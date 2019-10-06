@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# export the environment again
+
+conda env export > environment.yml
+
+exit 1

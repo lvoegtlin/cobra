@@ -15,10 +15,13 @@ def get_params():
                                required=True,
                                type=str)
     create_parser.add_argument('-ps', '--python-version',
-                               help="Python version for the project. Default: System version",
+                               help="Python version for the project. Default: 3.5",
                                required=False,
                                type=float,
-                               default=None)
+                               default=3.5)
+    create_parser.add_argument('-gh', '--git-hook',
+                               help="Install a pre-commit git hook which updates the conda environment",
+                               action="store_true")
 
     # update subcommand
 

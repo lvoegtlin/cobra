@@ -35,20 +35,28 @@ def main():
         subprocess.run("./pocr/clean.sh", shell=True)
 
 
-def create_project(name, python_version, **kwargs):
+def create_project(name, python_version, git_hook, **kwargs):
     # load config
     load_config()
     # create git repo
-    github = Github(Config.getInstance().sec)
-    user = github.get_user()
-    user.create_repo(name, auto_init=True)
+    if not kwargs['test']:
+        github = Github(Config.getInstance().sec)
+        user = github.get_user()
+        user.create_repo(name, auto_init=True)
 
-    # pull repo
-    cwd = os.getcwd()
-    git_url = "{}{}/{}.git".format(Config.getInstance().connection_type.url, Config.getInstance().username, name)
-    git.Git(cwd).clone(git_url)
-    # create conda
-    # TODO create git hook (conda list -r --json -> returns json with the revision)
+        # pull repo
+        cwd = os.getcwd()
+        git_url = "{}{}/{}.git".format(Config.getInstance().connection_type.url, Config.getInstance().username, name)
+        git.Git(cwd).clone(git_url)
+        # create conda
+        arguments = ["--name", name]
+        if python_version:
+            arguments.append("python={}".format(python_version))
+        # can not use conda api because it does not work
+        os.system("conda create {}".format(' '.join(arguments)))
+
+        if git_hook:
+            shutil.copy('./pocr/utils/pre-commit', os.path.join(os.getcwd(), '.git', 'hooks', 'pre-commit'))
 
 
 def load_config():
