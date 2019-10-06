@@ -9,7 +9,8 @@ setup(name='pocr',
       license='MIT',
       packages=['pocr'],
       entry_points={
-          'console_scripts': ['pocr=pocr.runMe:entry_point'],
+          'console_scripts': ['pocr=pocr.controller:entry_point'],
       },
-      install_requires=['keyring==19.1.0', 'pyyaml==5.1.2', 'PyInquirer==1.0.3', 'prompt_toolkit==1.0.14'],
+      install_requires=['keyring==19.1.0', 'pyyaml==5.1.2', 'PyInquirer==1.0.3', 'prompt_toolkit==1.0.14',
+                        'pygithub==1.43.8', 'gitpython-3.0.3'],
       zip_safe=False)
