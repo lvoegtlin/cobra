@@ -30,7 +30,7 @@ def get_params():
 
     # settings subcommand
 
-    if not len(sys.argv) == 0:
+    if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
 
