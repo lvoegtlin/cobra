@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 
 def get_params():
@@ -28,5 +29,9 @@ def get_params():
     # remove subcommand
 
     # settings subcommand
+
+    if not len(sys.argv) == 0:
+        parser.print_help()
+        sys.exit(1)
 
     return parser.parse_args()
