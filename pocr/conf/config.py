@@ -3,7 +3,7 @@ import copy
 import yaml
 import keyring
 
-from pocr.constants import Constants
+from pocr.constants import Paths
 from pocr.vcs import VCS
 
 
@@ -73,14 +73,6 @@ class Config(yaml.YAMLObject):
             cls.__instance = Config()
         return cls.__instance
 
-    def write_into_yaml_file(self, file_path):
-        with open(file_path, 'w') as f:
-            obj_copy = copy.deepcopy(self.getInstance())
-            del obj_copy._sec
-            del obj_copy._vcses
-            del obj_copy.user_password_domain
-            yaml.dump(obj_copy, f)
-
     # PRIVATE
     def __load_vcs(self):
         with open("./pocr/conf/vcs.yml", 'r') as vcs:
@@ -96,11 +88,8 @@ class Config(yaml.YAMLObject):
     def __load_user_cred(self):
         self._sec = keyring.get_password(self.user_password_domain, self.username)
 
-    def save_config(self):
-        self.write_into_yaml_file(Constants.CONF_FILE_PATH)
-
     def load_config(self):
-        with open(Constants.CONF_FILE_PATH, 'r') as f:
+        with open(Paths.CONF_FILE_PATH, 'r') as f:
             config = yaml.load(f, Loader=yaml.Loader)
             self.connection_type = config.connection_type
             self.used_vcs = config.used_vcs
@@ -108,6 +97,14 @@ class Config(yaml.YAMLObject):
 
             self.__load_vcs()
             self.__load_user_cred()
+
+    def save_config(self, file_path):
+        with open(file_path, 'w') as f:
+            obj_copy = copy.deepcopy(self.getInstance())
+            del obj_copy._sec
+            del obj_copy._vcses
+            del obj_copy.user_password_domain
+            yaml.dump(obj_copy, f)
 
 
 if __name__ == '__main__':

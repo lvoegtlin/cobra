@@ -10,6 +10,9 @@ class VCS(yaml.YAMLObject):
         self.connection_types = self.__init_connection_types(connection_types)
         self.token_create_url = token_url
 
+    def __repr__(self):
+        return "{}".format(self.name)
+
     # GETTERS / SETTERS
 
     @property

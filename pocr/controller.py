@@ -4,7 +4,7 @@ import git
 from github import Github
 
 from pocr.conf.config import Config
-from pocr.constants import Constants
+from pocr.constants import Paths, Texts
 from pocr.utils.command_line import get_params
 from pocr.utils.utils import get_object_from_list_by_name, ask_questions
 
@@ -17,7 +17,7 @@ import os
 def main():
     # read args
     args = get_params()
-    
+
     # requirements check
     check_requirements()
 
@@ -58,6 +58,8 @@ def create_project(name, python_version, git_hook, **kwargs):
         if git_hook:
             shutil.copy('./pocr/utils/pre-commit', os.path.join(os.getcwd(), '.git', 'hooks', 'pre-commit'))
 
+        # save path, conda name, name, git link, python version into project file
+
 
 def load_config():
     # load config
@@ -73,7 +75,7 @@ def first_usage():
     :return:
         boolean: if its first usage or not
     """
-    return not os.path.exists(Constants.POCR_FOLDER)
+    return not os.path.exists(Paths.POCR_FOLDER)
 
 
 # install wizard
@@ -84,7 +86,7 @@ def run_installation():
     """
 
     # ask for the vcs which are stored in the vc.yml file
-    vcs_selection = ask_questions(['list'], [Constants.VCS_SELECT_TEXT], ['vcs'], [Config.getInstance().vcses])
+    vcs_selection = ask_questions(['list'], [Texts.VCS_SELECT_TEXT], ['vcs'], [Config.getInstance().vcses])
     used_vcs = Config.getInstance().used_vcs = get_object_from_list_by_name(vcs_selection['vcs'],
                                                                             Config.getInstance().vcses)
 
@@ -94,14 +96,14 @@ def run_installation():
         if auth_selection == 'Username/Password':
             print("username/password option not availabe at the moment")
         # chose for toke or user/password
-        auth_selection = ask_questions(['list'], [Constants.AUTH_TEXT], ['auth'], [['Username/Password', 'Token']])
+        auth_selection = ask_questions(['list'], [Texts.AUTH_TEXT], ['auth'], [['Username/Password', 'Token']])
         auth_selection = auth_selection['auth']
 
     # if token
     if auth_selection == 'Token':
         print("If you dont have a token, create one here {}".format(used_vcs.token_create_url))
         username_token = ask_questions(['input', 'input'],
-                                       [Constants.USERNAME_TEXT, Constants.TOKEN_TEXT],
+                                       [Texts.USERNAME_TEXT, Texts.TOKEN_TEXT],
                                        ['username', 'token'],
                                        [[], []])
         Config.getInstance().username = username_token['username']
@@ -110,13 +112,13 @@ def run_installation():
     # else
     else:
         username_password = ask_questions(['input', 'password'],
-                                          [Constants.USERNAME_TEXT, Constants.PASSWORD_TEXT],
+                                          [Texts.USERNAME_TEXT, Texts.PASSWORD_TEXT],
                                           ['username', 'password'],
                                           [[], []])
         Config.getInstance().username = username_password['username']
         Config.getInstance().password = username_password['password']
 
-    con_selection = ask_questions(['list'], [Constants.CON_SELECT_TEXT], ['con_type'], [used_vcs.connection_types])
+    con_selection = ask_questions(['list'], [Texts.CON_SELECT_TEXT], ['con_type'], [used_vcs.connection_types])
     Config.getInstance().connection_type = get_object_from_list_by_name(con_selection['con_type'],
                                                                         used_vcs.connection_types)
 
@@ -129,13 +131,13 @@ def run_installation():
 
 def create_files_folders():
     # create folder
-    os.mkdir(Constants.POCR_FOLDER)
+    os.mkdir(Paths.POCR_FOLDER)
 
     # create conf file
-    open(Constants.CONF_FILE_PATH, 'a').close()
+    open(Paths.CONF_FILE_PATH, 'a').close()
     # Config.getInstance().write_into_yaml_file(Constants.CONF_FILE_PATH, **Constants.CONF_DICT)
     # project file {'TestProject': {infos}}
-    open(Constants.PROJECT_FILE_PATH, 'a').close()
+    open(Paths.PROJECT_FILE_PATH, 'a').close()
 
 
 def check_requirements():
