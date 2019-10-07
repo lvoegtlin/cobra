@@ -5,6 +5,8 @@ from github import Github
 
 from pocr.conf.config import Config
 from pocr.constants import Paths, Texts
+from pocr.exceptions.project_exceptions import ProjectNameAlreadyExists
+from pocr.project import Project
 from pocr.utils.command_line import get_params
 from pocr.utils.utils import get_object_from_list_by_name, ask_questions
 
@@ -31,23 +33,35 @@ def main():
     if args.command == 'create':
         create_project(**args.__dict__)
 
-    if args.test:
+    if args.clear:
         subprocess.run("./pocr/clean.sh", shell=True)
 
 
 def create_project(name, python_version, git_hook, **kwargs):
     # load config
     load_config()
+
+    # Check if project name already exists
+    try:
+        Project.project_exists(name)
+    except ProjectNameAlreadyExists:
+        print("Project name is already in use")
+        sys.exit(1)
+
     # create git repo
     if not kwargs['test']:
         github = Github(Config.getInstance().sec)
         user = github.get_user()
+        # check if repo exists
         user.create_repo(name, auto_init=True)
 
         # pull repo
         cwd = os.getcwd()
         git_url = "{}{}/{}.git".format(Config.getInstance().connection_type.url, Config.getInstance().username, name)
         git.Git(cwd).clone(git_url)
+
+        # check if ENV exists
+
         # create conda
         arguments = ["--name", name]
         if python_version:
@@ -59,6 +73,7 @@ def create_project(name, python_version, git_hook, **kwargs):
             shutil.copy('./pocr/utils/pre-commit', os.path.join(os.getcwd(), '.git', 'hooks', 'pre-commit'))
 
         # save path, conda name, name, git link, python version into project file
+    Project.append_project(Project(os.getcwd(), name, name, Config.getInstance().used_vcs, python_version))
 
 
 def load_config():
@@ -90,7 +105,7 @@ def run_installation():
     used_vcs = Config.getInstance().used_vcs = get_object_from_list_by_name(vcs_selection['vcs'],
                                                                             Config.getInstance().vcses)
 
-    # finish vcs install (ssh http selection; TODO: username and password or token)
+    # finish vcs install (ssh http selection; username and password or token)
     auth_selection = ""
     while auth_selection != "Token":
         if auth_selection == 'Username/Password':

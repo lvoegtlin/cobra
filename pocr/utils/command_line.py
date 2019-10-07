@@ -6,6 +6,7 @@ def get_params():
     parser = argparse.ArgumentParser(description="Project creation (pocr) command line tool")
     parser.add_argument("--install", help="Start the installation wizard.", action="store_true")
     parser.add_argument("--test", help="Puts pocr into testing mode", action="store_true")
+    parser.add_argument("--clear", help="Clears all user files", action="store_true")
 
     subparsers = parser.add_subparsers(help="The different functions of pocr", dest='command')
 

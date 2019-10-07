@@ -98,8 +98,8 @@ class Config(yaml.YAMLObject):
             self.__load_vcs()
             self.__load_user_cred()
 
-    def save_config(self, file_path):
-        with open(file_path, 'w') as f:
+    def save_config(self):
+        with open(Paths.CONF_FILE_PATH, 'w') as f:
             obj_copy = copy.deepcopy(self.getInstance())
             del obj_copy._sec
             del obj_copy._vcses
