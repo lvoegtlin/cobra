@@ -1,7 +1,7 @@
 import yaml
 
 from pocr.constants import Paths
-from pocr.exceptions.project_exceptions import ProjectNameAlreadyExists
+from pocr.utils.exceptions import ProjectNameAlreadyExists
 
 
 class Project(yaml.YAMLObject):

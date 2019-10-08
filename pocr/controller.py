@@ -1,14 +1,14 @@
 from __future__ import print_function, unicode_literals
 
 import git
-from github import Github
+from github import Github, UnknownObjectException, BadCredentialsException
 
 from pocr.conf.config import Config
 from pocr.constants import Paths, Texts
-from pocr.exceptions.project_exceptions import ProjectNameAlreadyExists
+from pocr.utils.exceptions import ProjectNameAlreadyExists, CondaAlreadyExists
 from pocr.project import Project
 from pocr.utils.command_line import get_params
-from pocr.utils.utils import get_object_from_list_by_name, ask_questions
+from pocr.utils.utils import get_object_from_list_by_name, ask_questions, check_env_exists
 
 import subprocess
 import shutil
@@ -41,26 +41,21 @@ def create_project(name, python_version, git_hook, **kwargs):
     # load config
     load_config()
 
-    # Check if project name already exists
-    try:
-        Project.project_exists(name)
-    except ProjectNameAlreadyExists:
-        print("Project name is already in use")
-        sys.exit(1)
+    # get github user
+    github = Github(Config.getInstance().sec)
+    user = github.get_user()
+
+    # checks if the different modules already exists
+    duplication_check(name, user)
 
     # create git repo
     if not kwargs['test']:
-        github = Github(Config.getInstance().sec)
-        user = github.get_user()
-        # check if repo exists
         user.create_repo(name, auto_init=True)
 
         # pull repo
         cwd = os.getcwd()
         git_url = "{}{}/{}.git".format(Config.getInstance().connection_type.url, Config.getInstance().username, name)
         git.Git(cwd).clone(git_url)
-
-        # check if ENV exists
 
         # create conda
         arguments = ["--name", name]
@@ -74,6 +69,26 @@ def create_project(name, python_version, git_hook, **kwargs):
 
         # save path, conda name, name, git link, python version into project file
     Project.append_project(Project(os.getcwd(), name, name, Config.getInstance().used_vcs, python_version))
+
+
+def duplication_check(project_name, github_user):
+    # Check if project name already exists
+    try:
+        # project check
+        Project.project_exists(project_name)
+        # github check
+        github_user.get_repo(project_name)
+        # conda check
+        check_env_exists(project_name)
+    except ProjectNameAlreadyExists:
+        print("Project name is already in use")
+        sys.exit(1)
+    except UnknownObjectException:
+        print(
+            "The Github user {} already has a repository named {}".format(Config.getInstance().username, project_name))
+        sys.exit(1)
+    except CondaAlreadyExists:
+        print("There exists already a conda environment named {}".format(project_name))
 
 
 def load_config():
@@ -106,32 +121,39 @@ def run_installation():
                                                                             Config.getInstance().vcses)
 
     # finish vcs install (ssh http selection; username and password or token)
-    auth_selection = ""
-    while auth_selection != "Token":
-        if auth_selection == 'Username/Password':
-            print("username/password option not availabe at the moment")
-        # chose for toke or user/password
-        auth_selection = ask_questions(['list'], [Texts.AUTH_TEXT], ['auth'], [['Username/Password', 'Token']])
-        auth_selection = auth_selection['auth']
+    # # chose for toke or user/password
+    # auth_selection = ask_questions(['list'], [Texts.AUTH_TEXT], ['auth'], [['Username/Password', 'Token']])
+    # auth_selection = auth_selection['auth']
+    auth_selection = 'Token'
 
-    # if token
-    if auth_selection == 'Token':
-        print("If you dont have a token, create one here {}".format(used_vcs.token_create_url))
-        username_token = ask_questions(['input', 'input'],
-                                       [Texts.USERNAME_TEXT, Texts.TOKEN_TEXT],
-                                       ['username', 'token'],
-                                       [[], []])
-        Config.getInstance().username = username_token['username']
-        Config.getInstance().sec = username_token['token']
-        Config.getInstance().save_user_cred()
-    # else
-    else:
-        username_password = ask_questions(['input', 'password'],
-                                          [Texts.USERNAME_TEXT, Texts.PASSWORD_TEXT],
-                                          ['username', 'password'],
-                                          [[], []])
-        Config.getInstance().username = username_password['username']
-        Config.getInstance().password = username_password['password']
+    token_not_validated = True
+    while token_not_validated:
+        # if token
+        if auth_selection == 'Token':
+            print("If you dont have a token, create one here {}".format(used_vcs.token_create_url))
+            token_input = ask_questions(['input'],
+                                        [Texts.TOKEN_TEXT],
+                                        ['token'],
+                                        [[]])
+            # check if token is legit
+            try:
+                username = Github(token_input['token']).get_user().login
+                Config.getInstance().username = username
+                Config.getInstance().sec = token_input['token']
+                Config.getInstance().save_user_cred()
+                token_not_validated = False
+            except BadCredentialsException:
+                print("The token is not valid!")
+
+        # TODO with username and password
+        if auth_selection == 'Username/Password':
+            print("BETA! Please report issues and try to login with token")
+            username_password = ask_questions(['input', 'password'],
+                                              [Texts.USERNAME_TEXT, Texts.PASSWORD_TEXT],
+                                              ['username', 'password'],
+                                              [[], []])
+            Config.getInstance().username = username_password['username']
+            Config.getInstance().password = username_password['password']
 
     con_selection = ask_questions(['list'], [Texts.CON_SELECT_TEXT], ['con_type'], [used_vcs.connection_types])
     Config.getInstance().connection_type = get_object_from_list_by_name(con_selection['con_type'],
