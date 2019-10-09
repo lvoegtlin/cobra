@@ -99,6 +99,7 @@ class Config(yaml.YAMLObject):
             self.__load_user_cred()
 
     def save_config(self):
+        self.save_user_cred()
         with open(Paths.CONF_FILE_PATH, 'w') as f:
             obj_copy = copy.deepcopy(self.getInstance())
             del obj_copy._sec

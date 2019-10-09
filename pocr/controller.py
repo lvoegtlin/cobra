@@ -1,14 +1,14 @@
 from __future__ import print_function, unicode_literals
 
 import git
-from github import Github, UnknownObjectException, BadCredentialsException
+from github import Github, UnknownObjectException
 
 from pocr.conf.config import Config
 from pocr.constants import Paths, Texts
 from pocr.utils.exceptions import ProjectNameAlreadyExists, CondaAlreadyExists
 from pocr.project import Project
 from pocr.utils.command_line import get_params
-from pocr.utils.utils import get_object_from_list_by_name, ask_questions, check_env_exists
+from pocr.utils.utils import get_object_from_list_by_name, ask_questions, check_env_exists, user_password_dialog
 
 import subprocess
 import shutil
@@ -46,6 +46,7 @@ def create_project(name, python_version, git_hook, **kwargs):
     user = github.get_user()
 
     # checks if the different modules already exists
+    # TODO give option to connect existing github repo or/and conda env
     duplication_check(name, user)
 
     # create git repo
@@ -121,39 +122,9 @@ def run_installation():
                                                                             Config.getInstance().vcses)
 
     # finish vcs install (ssh http selection; username and password or token)
-    # # chose for toke or user/password
-    # auth_selection = ask_questions(['list'], [Texts.AUTH_TEXT], ['auth'], [['Username/Password', 'Token']])
-    # auth_selection = auth_selection['auth']
-    auth_selection = 'Token'
-
-    token_not_validated = True
-    while token_not_validated:
-        # if token
-        if auth_selection == 'Token':
-            print("If you dont have a token, create one here {}".format(used_vcs.token_create_url))
-            token_input = ask_questions(['input'],
-                                        [Texts.TOKEN_TEXT],
-                                        ['token'],
-                                        [[]])
-            # check if token is legit
-            try:
-                username = Github(token_input['token']).get_user().login
-                Config.getInstance().username = username
-                Config.getInstance().sec = token_input['token']
-                Config.getInstance().save_user_cred()
-                token_not_validated = False
-            except BadCredentialsException:
-                print("The token is not valid!")
-
-        # TODO with username and password
-        if auth_selection == 'Username/Password':
-            print("BETA! Please report issues and try to login with token")
-            username_password = ask_questions(['input', 'password'],
-                                              [Texts.USERNAME_TEXT, Texts.PASSWORD_TEXT],
-                                              ['username', 'password'],
-                                              [[], []])
-            Config.getInstance().username = username_password['username']
-            Config.getInstance().password = username_password['password']
+    error = user_password_dialog()
+    while error:
+        error = user_password_dialog(error) or {}
 
     con_selection = ask_questions(['list'], [Texts.CON_SELECT_TEXT], ['con_type'], [used_vcs.connection_types])
     Config.getInstance().connection_type = get_object_from_list_by_name(con_selection['con_type'],

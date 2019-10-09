@@ -10,11 +10,7 @@ class Paths:
 
 class Structures:
     # default yaml structure for the config file
-    CONF_DICT = {'vcs_name': None,
-                 'connection_type': 'https',
-                 'username': None,
-                 'token_domain': None,
-                 'password_domain': None}
+    AUTH_SCOPES = ['repo', 'delete_repo']
 
 
 class Texts:
@@ -24,3 +20,4 @@ class Texts:
     PASSWORD_TEXT = "Enter your password (of the VCS host)"
     AUTH_TEXT = "What kind of Authentication do you want to use: (if 2FA chose token)"
     TOKEN_TEXT = "Enter the token"
+    TFA_TEXT = "Enter the 2FA token"
