@@ -37,7 +37,10 @@ def main():
         subprocess.run("./pocr/clean.sh", shell=True)
 
 
-def create_project(name, python_version, git_hook, **kwargs):
+def create_project(project_name, python_version, git_hook, **kwargs):
+    git_exist = 'repo' in kwargs
+    conda_exist = 'conda' in kwargs
+
     # load config
     load_config()
 
@@ -47,40 +50,53 @@ def create_project(name, python_version, git_hook, **kwargs):
 
     # checks if the different modules already exists
     # TODO give option to connect existing github repo or/and conda env
-    duplication_check(name, user)
+    duplication_check(project_name, user, not git_exist, not conda_exist)
 
     # create git repo
-    if not kwargs['test']:
-        user.create_repo(name, auto_init=True)
+    if kwargs['test']:
+        return
 
-        # pull repo
-        cwd = os.getcwd()
-        git_url = "{}{}/{}.git".format(Config.getInstance().connection_type.url, Config.getInstance().username, name)
-        git.Git(cwd).clone(git_url)
+    if not git_exist:
+        user.create_repo(project_name, auto_init=True)
+        repo_name = project_name
+    else:
+        repo_name = kwargs['repo']
 
-        # create conda
-        arguments = ["--name", name]
-        if python_version:
-            arguments.append("python={}".format(python_version))
-        # can not use conda api because it does not work
-        os.system("conda create {}".format(' '.join(arguments)))
+    # pull repo
+    cwd = os.getcwd()
+    git_url = "{}{}/{}.git".format(Config.getInstance().connection_type.url, Config.getInstance().username, repo_name)
+    git.Git(cwd).clone(git_url)
 
-        if git_hook:
-            shutil.copy('./pocr/utils/pre-commit', os.path.join(os.getcwd(), '.git', 'hooks', 'pre-commit'))
+    if not conda_exist:
+        conda_name = project_name
+    else:
+        conda_name = kwargs['conda']
 
-        # save path, conda name, name, git link, python version into project file
-    Project.append_project(Project(os.getcwd(), name, name, Config.getInstance().used_vcs, python_version))
+    # create conda
+    arguments = ["--name", conda_name]
+    if python_version:
+        arguments.append("python={}".format(python_version))
+    # can not use conda api because it does not work
+    os.system("conda create {}".format(' '.join(arguments)))
+
+    if git_hook:
+        shutil.copy('./pocr/utils/pre-commit', os.path.join(os.getcwd(), '.git', 'hooks', 'pre-commit'))
+
+    # save path, conda name, name, git link, python version into project file
+    Project.append_project(Project(os.getcwd(), project_name, conda_name, repo_name, Config.getInstance().used_vcs, python_version))
 
 
-def duplication_check(project_name, github_user):
+def duplication_check(project_name, github_user, git_check=True, conda_check=True):
     # Check if project name already exists
     try:
         # project check
         Project.project_exists(project_name)
-        # github check
-        github_user.get_repo(project_name)
-        # conda check
-        check_env_exists(project_name)
+        if git_check:
+            # github check
+            github_user.get_repo(project_name)
+        if conda_check:
+            # conda check
+            check_env_exists(project_name)
     except ProjectNameAlreadyExists:
         print("Project name is already in use")
         sys.exit(1)

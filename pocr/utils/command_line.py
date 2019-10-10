@@ -17,20 +17,30 @@ def get_params():
                                help="Name of the project",
                                required=True,
                                type=str)
-    create_parser.add_argument('-ps', '--python-version',
+    create_parser.add_argument('-p', '--python-version',
                                help="Python version for the project. Default: 3.5",
                                required=False,
                                type=float,
                                default=3.5)
+    create_parser.add_argument('-r', '--repo',
+                               help="If you already have a github repo for the project. Enter the repo name.",
+                               required=False,
+                               type=str)
+    create_parser.add_argument('-c', '--conda',
+                               help="If you already have a conda environment for the project. Enter the name.",
+                               required=False,
+                               type=str)
     create_parser.add_argument('-gh', '--git-hook',
-                               help="Install a pre-commit git hook which updates the conda environment",
+                               help="Install a pre-commit git hook which updates the conda environment file"
+                                    " before you commit",
                                action="store_true")
+    # list subcommand
 
     # update subcommand
 
     # remove subcommand
 
-    # settings subcommand
+    # config subcommand
 
     if len(sys.argv) == 1:
         parser.print_help()

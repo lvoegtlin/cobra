@@ -7,10 +7,11 @@ from pocr.utils.exceptions import ProjectNameAlreadyExists
 class Project(yaml.YAMLObject):
     yaml_tag = u'!Project'
 
-    def __init__(self, project_path=None, name=None, conda_name=None, vcs=None, python=None):
+    def __init__(self, project_path=None, project_name=None, conda_name=None, repo_name=None, vcs=None, python=None):
         self.project_path = project_path
-        self.name = name
+        self.name = project_name
         self.conda_name = conda_name
+        self.repo_name = repo_name
         self.vcs = vcs
         self.python = python
 
@@ -90,3 +91,11 @@ class Project(yaml.YAMLObject):
     @python.setter
     def python(self, value):
         self._python = value
+
+    @property
+    def repo_name(self):
+        return self._repo_name
+
+    @repo_name.setter
+    def repo_name(self, value):
+        self._repo_name = value
