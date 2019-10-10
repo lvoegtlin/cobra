@@ -4,7 +4,7 @@ import git
 from github import Github, UnknownObjectException
 
 from pocr.conf.config import Config
-from pocr.constants import Paths, Texts
+from pocr.utils.constants import Paths, Texts
 from pocr.utils.exceptions import ProjectNameAlreadyExists, CondaAlreadyExists
 from pocr.project import Project
 from pocr.utils.command_line import get_params

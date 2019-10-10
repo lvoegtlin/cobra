@@ -3,7 +3,7 @@ import copy
 import yaml
 import keyring
 
-from pocr.constants import Paths
+from pocr.utils.constants import Paths
 from pocr.vcs import VCS
 
 

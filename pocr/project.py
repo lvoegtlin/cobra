@@ -1,6 +1,6 @@
 import yaml
 
-from pocr.constants import Paths
+from pocr.utils.constants import Paths
 from pocr.utils.exceptions import ProjectNameAlreadyExists
 
 

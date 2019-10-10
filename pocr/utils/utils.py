@@ -5,7 +5,7 @@ from PyInquirer import prompt
 from github import Github, GithubException
 
 from pocr.conf.config import Config
-from pocr.constants import Texts, Structures
+from pocr.utils.constants import Texts, Structures
 from pocr.utils.exceptions import CondaAlreadyExists
 
 
@@ -64,9 +64,8 @@ def user_password_dialog(error=None):
             if error['key'] == 0:
                 print(error['message'])
                 github, username, password = dialog_username_password()
-                usr = github.get_user()
-                sec = usr.get_authorization(usr.id)
-                github = Github(sec)
+                auth = github.get_user().create_authorization(scopes=Structures.AUTH_SCOPES,
+                                                              note='pocr')
 
             if error['key'] == 1:
                 print(error['message'])
@@ -75,21 +74,26 @@ def user_password_dialog(error=None):
                 auth = github.get_user().create_authorization(scopes=Structures.AUTH_SCOPES,
                                                               onetime_password=tfa,
                                                               note='pocr')
-                sec = auth.token
-                github = Github(auth.token)
 
-            # to test if the github object has a correct authentication
+            sec = auth.token or ""
+            github = Github(sec)
+
+        # to test if the github object has a correct authentication
         github.get_user().id
 
         Config.getInstance().username = username
         Config.getInstance().sec = sec
     except GithubException as e:
         error_msg = {}
-        if e.data['message'] == 'Bad credentials':
-            error_msg['key'] = 0
-        else:
+        if e.status == 422:
+            error_msg['message'] = Texts.TOKEN_ALREADY_EXISTS_TEXT
             error_msg['key'] = 1
-        error_msg['message'] = e.data['message']
+        if e.status == 401:
+            if e.data['message'] == 'Bad credentials':
+                error_msg['key'] = 0
+            else:
+                error_msg['key'] = 1
+            error_msg['message'] = e.data['message']
         error_msg['cred'] = (github, username, password)
         return error_msg
 
