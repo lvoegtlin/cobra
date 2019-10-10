@@ -13,7 +13,7 @@ def get_params():
 
     # create subcommand
     create_parser = subparsers.add_parser("create", help="Create a new pocr project")
-    create_parser.add_argument('-n', '--name',
+    create_parser.add_argument('-n', '--project-name',
                                help="Name of the project",
                                required=True,
                                type=str)
@@ -22,11 +22,11 @@ def get_params():
                                required=False,
                                type=float,
                                default=3.5)
-    create_parser.add_argument('-r', '--repo',
+    create_parser.add_argument('-r', '--repo-name',
                                help="If you already have a github repo for the project. Enter the repo name.",
                                required=False,
                                type=str)
-    create_parser.add_argument('-c', '--conda',
+    create_parser.add_argument('-c', '--conda-name',
                                help="If you already have a conda environment for the project. Enter the name.",
                                required=False,
                                type=str)
@@ -35,6 +35,7 @@ def get_params():
                                     " before you commit",
                                action="store_true")
     # list subcommand
+    list_parser = subparsers.add_parser("list", help="Lists all existing pocr projects")
 
     # update subcommand
 

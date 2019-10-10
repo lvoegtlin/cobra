@@ -5,3 +5,7 @@ class ProjectNameAlreadyExists(Exception):
 
 class CondaAlreadyExists(Exception):
     pass
+
+
+class RepoAlreadyExists(Exception):
+    pass

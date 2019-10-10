@@ -12,6 +12,6 @@ setup(name='pocr',
           'console_scripts': ['pocr=pocr.controller:entry_point'],
       },
       install_requires=['keyring==19.0.1', 'pyyaml==5.1.2', 'PyInquirer==1.0.3', 'prompt_toolkit==1.0.14',
-                        'pygithub==1.43.8', 'gitpython==3.0.3'],
+                        'pygithub==1.43.8', 'gitpython==3.0.3', 'tabulate==0.8.5'],
       python_requires='>=3',
       zip_safe=False)

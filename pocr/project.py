@@ -7,23 +7,23 @@ from pocr.utils.exceptions import ProjectNameAlreadyExists
 class Project(yaml.YAMLObject):
     yaml_tag = u'!Project'
 
-    def __init__(self, project_path=None, project_name=None, conda_name=None, repo_name=None, vcs=None, python=None):
+    def __init__(self, project_path=None, project_name=None, conda_name=None, repo_name=None, vcs=None, python_version=None):
         self.project_path = project_path
-        self.name = project_name
+        self.project_name = project_name
         self.conda_name = conda_name
         self.repo_name = repo_name
         self.vcs = vcs
-        self.python = python
+        self.python_version = python_version
 
     def __repr__(self):
-        return "{}\t{}\t{}\t{}".format(self.name, self.conda_name, self.vcs, self.python)
+        return "{}\t{}\t{}\t{}".format(self._project_name, self._conda_name, self._vcs, self._python_version)
 
     # STATIC
 
     @staticmethod
     def load_projects():
         with open(Paths.PROJECT_FILE_PATH, 'r') as f:
-            return yaml.load_all(f, Loader=yaml.Loader)
+            return yaml.load(f, Loader=yaml.Loader) or None
 
     @staticmethod
     def save_projects(projects: list):
@@ -61,12 +61,12 @@ class Project(yaml.YAMLObject):
         self._project_path = value
 
     @property
-    def name(self):
-        return self._name
+    def project_name(self):
+        return self._project_name
 
-    @name.setter
-    def name(self, value):
-        self._name = value
+    @project_name.setter
+    def project_name(self, value):
+        self._project_name = value
 
     @property
     def conda_name(self):
@@ -85,12 +85,12 @@ class Project(yaml.YAMLObject):
         self._vcs = value
 
     @property
-    def python(self):
-        return self._python
+    def python_version(self):
+        return self._python_version
 
-    @python.setter
-    def python(self, value):
-        self._python = value
+    @python_version.setter
+    def python_version(self, value):
+        self._python_version = value
 
     @property
     def repo_name(self):

@@ -10,7 +10,7 @@ from github import Github, GithubException, UnknownObjectException
 from pocr.conf.config import Config
 from pocr.project import Project
 from pocr.utils.constants import Texts, Structures, Paths
-from pocr.utils.exceptions import CondaAlreadyExists, ProjectNameAlreadyExists
+from pocr.utils.exceptions import CondaAlreadyExists, ProjectNameAlreadyExists, RepoAlreadyExists
 
 
 def get_object_from_list_by_name(filter_str, input_list):
@@ -42,7 +42,7 @@ def ask_questions(types: list, messages: list, names: list, iter_list: list):
 def check_env_exists(name):
     envs = subprocess.check_output(['conda', 'env', 'list', '--json']).decode('utf-8')
     envs = json.loads(envs.replace('\n', ''))
-    if name not in envs:
+    if name in envs['envs']:
         raise CondaAlreadyExists()
 
 
@@ -102,10 +102,6 @@ def user_password_dialog(error=None):
         return error_msg
 
 
-if __name__ == '__main__':
-    check_env_exists('ICDAR_Tutorial')
-
-
 def duplication_check(project_name, github_user, git_check=True, conda_check=True):
     # Check if project name already exists
     try:
@@ -113,19 +109,28 @@ def duplication_check(project_name, github_user, git_check=True, conda_check=Tru
         Project.project_exists(project_name)
         if git_check:
             # github check
-            github_user.get_repo(project_name)
+            check_repo_exists(project_name, github_user)
         if conda_check:
             # conda check
             check_env_exists(project_name)
     except ProjectNameAlreadyExists:
         print("Project name is already in use")
         sys.exit(1)
-    except UnknownObjectException:
+    except RepoAlreadyExists:
         print(
             "The Github user {} already has a repository named {}".format(Config.getInstance().username, project_name))
         sys.exit(1)
     except CondaAlreadyExists:
         print("There exists already a conda environment named {}".format(project_name))
+        sys.exit(1)
+
+
+def check_repo_exists(name, github_user):
+    try:
+        github_user.get_repo(name)
+    except UnknownObjectException:
+        return
+    raise RepoAlreadyExists
 
 
 def create_files_folders():

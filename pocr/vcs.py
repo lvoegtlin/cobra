@@ -39,7 +39,8 @@ class VCS(yaml.YAMLObject):
     def token_create_url(self, value):
         self._token_create_url = value
 
-    def __init_connection_types(self, connection_types):
+    @staticmethod
+    def __init_connection_types(connection_types):
         con_type_list = []
         for name, url in connection_types.items():
             con_type_list.append(ConnectionType(name, url))
