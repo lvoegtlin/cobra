@@ -1,12 +1,16 @@
+import os
+import shutil
 import subprocess
 import json
+import sys
 
 from PyInquirer import prompt
-from github import Github, GithubException
+from github import Github, GithubException, UnknownObjectException
 
 from pocr.conf.config import Config
-from pocr.utils.constants import Texts, Structures
-from pocr.utils.exceptions import CondaAlreadyExists
+from pocr.project import Project
+from pocr.utils.constants import Texts, Structures, Paths
+from pocr.utils.exceptions import CondaAlreadyExists, ProjectNameAlreadyExists
 
 
 def get_object_from_list_by_name(filter_str, input_list):
@@ -100,3 +104,56 @@ def user_password_dialog(error=None):
 
 if __name__ == '__main__':
     check_env_exists('ICDAR_Tutorial')
+
+
+def duplication_check(project_name, github_user, git_check=True, conda_check=True):
+    # Check if project name already exists
+    try:
+        # project check
+        Project.project_exists(project_name)
+        if git_check:
+            # github check
+            github_user.get_repo(project_name)
+        if conda_check:
+            # conda check
+            check_env_exists(project_name)
+    except ProjectNameAlreadyExists:
+        print("Project name is already in use")
+        sys.exit(1)
+    except UnknownObjectException:
+        print(
+            "The Github user {} already has a repository named {}".format(Config.getInstance().username, project_name))
+        sys.exit(1)
+    except CondaAlreadyExists:
+        print("There exists already a conda environment named {}".format(project_name))
+
+
+def create_files_folders():
+    # create folder
+    os.mkdir(Paths.POCR_FOLDER)
+
+    # create conf file
+    open(Paths.CONF_FILE_PATH, 'a').close()
+    # Config.getInstance().write_into_yaml_file(Constants.CONF_FILE_PATH, **Constants.CONF_DICT)
+    # project file {'TestProject': {infos}}
+    open(Paths.PROJECT_FILE_PATH, 'a').close()
+
+
+def check_requirements():
+    if shutil.which("conda") is None:
+        raise Exception(
+            "Conda is not installed! https://docs.conda.io/projects/conda/en/latest/user-guide/install/")
+    if sys.version_info[0] < 3 and sys.version_info[1] < 5:
+        raise Exception("The default python version is lower then 3.5. Please update!")
+
+
+def first_usage():
+    """
+    Checks if the pocr config file is existing.
+    If this file is existing we know that it is not first usage and so the function returns false.
+    Else vise versa.
+
+    :return:
+        boolean: if its first usage or not
+    """
+    return not os.path.exists(Paths.POCR_FOLDER)

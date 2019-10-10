@@ -1,18 +1,17 @@
 from __future__ import print_function, unicode_literals
 
 import git
-from github import Github, UnknownObjectException
+from github import Github
 
 from pocr.conf.config import Config
-from pocr.utils.constants import Paths, Texts
-from pocr.utils.exceptions import ProjectNameAlreadyExists, CondaAlreadyExists
+from pocr.utils.constants import Texts
 from pocr.project import Project
 from pocr.utils.command_line import get_params
-from pocr.utils.utils import get_object_from_list_by_name, ask_questions, check_env_exists, user_password_dialog
+from pocr.utils.utils import get_object_from_list_by_name, ask_questions, user_password_dialog, \
+    duplication_check, create_files_folders, check_requirements, first_usage
 
 import subprocess
 import shutil
-import sys
 import os
 
 
@@ -25,24 +24,24 @@ def main():
 
     if args.install:
         if first_usage():
-            run_installation()
+            installation()
             print('POCR successfully installed!')
         else:
             print("POCR is already installed!")
 
     if args.command == 'create':
-        create_project(**args.__dict__)
+        create(**args.__dict__)
 
     if args.clear:
         subprocess.run("./pocr/clean.sh", shell=True)
 
 
-def create_project(project_name, python_version, git_hook, **kwargs):
+def create(project_name, python_version, git_hook, **kwargs):
     git_exist = 'repo' in kwargs
     conda_exist = 'conda' in kwargs
 
     # load config
-    load_config()
+    Config.getInstance().load_config()
 
     # get github user
     github = Github(Config.getInstance().sec)
@@ -86,47 +85,7 @@ def create_project(project_name, python_version, git_hook, **kwargs):
     Project.append_project(Project(os.getcwd(), project_name, conda_name, repo_name, Config.getInstance().used_vcs, python_version))
 
 
-def duplication_check(project_name, github_user, git_check=True, conda_check=True):
-    # Check if project name already exists
-    try:
-        # project check
-        Project.project_exists(project_name)
-        if git_check:
-            # github check
-            github_user.get_repo(project_name)
-        if conda_check:
-            # conda check
-            check_env_exists(project_name)
-    except ProjectNameAlreadyExists:
-        print("Project name is already in use")
-        sys.exit(1)
-    except UnknownObjectException:
-        print(
-            "The Github user {} already has a repository named {}".format(Config.getInstance().username, project_name))
-        sys.exit(1)
-    except CondaAlreadyExists:
-        print("There exists already a conda environment named {}".format(project_name))
-
-
-def load_config():
-    # load config
-    Config.getInstance().load_config()
-
-
-def first_usage():
-    """
-    Checks if the pocr config file is existing.
-    If this file is existing we know that it is not first usage and so the function returns false.
-    Else vise versa.
-
-    :return:
-        boolean: if its first usage or not
-    """
-    return not os.path.exists(Paths.POCR_FOLDER)
-
-
-# install wizard
-def run_installation():
+def installation():
     """
     With this method the user installs the tool. That means he creates the config and the project file,
     enters the user credentials as well as defines the connection type.
@@ -151,25 +110,6 @@ def run_installation():
 
     # save infos
     Config.getInstance().save_config()
-
-
-def create_files_folders():
-    # create folder
-    os.mkdir(Paths.POCR_FOLDER)
-
-    # create conf file
-    open(Paths.CONF_FILE_PATH, 'a').close()
-    # Config.getInstance().write_into_yaml_file(Constants.CONF_FILE_PATH, **Constants.CONF_DICT)
-    # project file {'TestProject': {infos}}
-    open(Paths.PROJECT_FILE_PATH, 'a').close()
-
-
-def check_requirements():
-    if shutil.which("conda") is None:
-        raise Exception(
-            "Conda is not installed! https://docs.conda.io/projects/conda/en/latest/user-guide/install/")
-    if sys.version_info[0] < 3 and sys.version_info[1] < 5:
-        raise Exception("The default python version is lower then 3.5. Please update!")
 
 
 def entry_point():
