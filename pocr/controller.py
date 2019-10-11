@@ -1,19 +1,19 @@
 import sys
+import subprocess
+import shutil
+import os
 
 import git
-from github import Github
+from github import UnknownObjectException
 from tabulate import tabulate
 
 from pocr.conf.config import Config
 from pocr.utils.constants import Texts
 from pocr.project import Project
 from pocr.utils.command_line import get_params
+from pocr.utils.exceptions import ProjectNameAlreadyExists, CondaAlreadyExists
 from pocr.utils.utils import get_object_from_list_by_name, ask_questions, user_password_dialog, \
-    duplication_check, create_files_folders, check_requirements, first_usage
-
-import subprocess
-import shutil
-import os
+    duplication_check, create_files_folders, check_requirements, first_usage, get_github_user, check_env_exists
 
 
 def main():
@@ -40,6 +40,9 @@ def main():
 
     if args.command == 'list':
         listing(**args.__dict__)
+
+    if args.command == 'remove':
+        remove(**args.__dict__)
 
     if args.clear:
         subprocess.run("./pocr/clean.sh", shell=True)
@@ -81,9 +84,7 @@ def create(project_name, python_version, git_hook, **kwargs):
     # load config
     Config.getInstance().load_config()
 
-    # get github user
-    github = Github(Config.getInstance().sec)
-    user = github.get_user()
+    user = get_github_user()
 
     # checks if the different modules already exists
     # TODO give option to connect existing github repo or/and conda env
@@ -108,7 +109,7 @@ def create(project_name, python_version, git_hook, **kwargs):
         if python_version:
             arguments.append("python={}".format(python_version))
         # can not use conda api because it does not work
-        os.system("conda create {}".format(' '.join(arguments)))
+        os.system("conda create -y {}".format(' '.join(arguments)))
 
         if git_hook:
             shutil.copy('./pocr/utils/pre-commit', os.path.join(os.getcwd(), '.git', 'hooks', 'pre-commit'))
@@ -128,6 +129,52 @@ def listing(**kwargs):
         print(tabulate(projects, headers=headers))
     else:
         print("There are no pocr projects! Use the 'create' command to create some projects.")
+
+
+def remove(name, folder, repo, conda, remove_all, **kwargs):
+    # remove the project from the project file
+    try:
+        Project.project_exists(name)
+        print("Project does not exist")
+        if not kwargs['test']:
+            sys.exit(1)
+    except ProjectNameAlreadyExists:
+        project = Project.remove_project(name)
+        print("Successfully removed pocr project {} from the project file".format(name))
+
+    # load config
+    Config.getInstance().load_config()
+
+    # github user object
+    user = get_github_user()
+
+    if remove_all:
+        folder, repo, conda = True
+
+    if repo:
+        try:
+            repo = user.get_repo(project.repo_name)
+            repo.delete()
+            print("Successfully removed repo")
+        except UnknownObjectException as e:
+            if e.status == 404:
+                print("Repo could not be deleted! Not existing")
+            if e.status == 403:
+                print('Permission problem, please reinstall pocr (--clean; --install)')
+    if folder:
+        try:
+            shutil.rmtree(project.project_path)
+            print("Successfully removed folders")
+        except PermissionError:
+            print("Permission error for deleting the project {} folder."
+                  " Please delete it by hand or try again.".format(project.project_path))
+    if conda:
+        try:
+            check_env_exists(project.conda_name)
+            print("Conda environment does not exist")
+        except CondaAlreadyExists:
+            subprocess.check_output(['conda', 'env', 'remove', '--name', project.conda_name])
+            print("Successfully removed conda environment")
 
 
 def entry_point():

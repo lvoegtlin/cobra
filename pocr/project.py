@@ -41,6 +41,16 @@ class Project(yaml.YAMLObject):
             yaml.dump(yaml_dict, f)
 
     @staticmethod
+    def remove_project(project_name):
+        with open(Paths.PROJECT_FILE_PATH, 'r') as f:
+            yaml_dict = yaml.load(f, Loader=yaml.Loader) or {}
+        project = yaml_dict[project_name]
+        del yaml_dict[project_name]
+        with open(Paths.PROJECT_FILE_PATH, 'w') as f:
+            yaml.dump(yaml_dict, f)
+        return project
+
+    @staticmethod
     def project_exists(project_name: str):
         with open(Paths.PROJECT_FILE_PATH, 'r') as f:
             yaml_dict = yaml.load(f, Loader=yaml.Loader)

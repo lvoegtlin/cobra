@@ -40,8 +40,25 @@ def get_params():
     # update subcommand
 
     # remove subcommand
+    remove_parser = subparsers.add_parser('remove', help="Remove a pocr project")
+    remove_parser.add_argument('-n', '--name',
+                               help="Name of the pocr project to remove",
+                               required=True,
+                               type=str)
+    remove_parser.add_argument('-r', '--repo',
+                               help="Also removes the remote repository",
+                               action="store_true")
+    remove_parser.add_argument('-c', '--conda',
+                               help="Also removes the conda environment from the system",
+                               action="store_true")
+    remove_parser.add_argument('-f', '--folder',
+                               help="Also removes the local folder",
+                               action="store_true")
+    remove_parser.add_argument('-a', '--remove-all',
+                               help="Remove everything (repo, folder, conda)",
+                               action="store_true")
 
-    # config subcommand
+    # config subcommand TODO Do we need that option?
 
     if len(sys.argv) == 1:
         parser.print_help()

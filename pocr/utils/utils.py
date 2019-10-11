@@ -166,3 +166,10 @@ def first_usage():
         boolean: if its first usage or not
     """
     return not os.path.exists(Paths.POCR_FOLDER)
+
+
+def get_github_user():
+    # get github user
+    github = Github(Config.getInstance().sec)
+    user = github.get_user()
+    return user
