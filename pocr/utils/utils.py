@@ -40,9 +40,13 @@ def ask_questions(types: list, messages: list, names: list, iter_list: list):
 
 
 def check_env_exists(name):
+    # execute command
     envs = subprocess.check_output(['conda', 'env', 'list', '--json']).decode('utf-8')
-    envs = json.loads(envs.replace('\n', ''))
-    if name in envs['envs']:
+    # create a dict
+    envs = json.loads(envs.replace('\n', ''))['envs']
+    # just get the basename of the conda env path
+    envs = [os.path.basename(e) for e in envs]
+    if name in envs:
         raise CondaAlreadyExists()
 
 
