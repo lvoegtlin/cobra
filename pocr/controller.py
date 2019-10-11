@@ -124,7 +124,7 @@ def listing(**kwargs):
     if projects:
         headers = vars(next(iter(projects.values()))).keys()
         headers = [h[1:] for h in headers]
-        projects = [[p.project_name, p.conda_name, p.repo_name, p.python_version] for p in projects.values()]
+        projects = [list(vars(p).values()) for p in projects.values()]
         print(tabulate(projects, headers=headers))
     else:
         print("There are no pocr projects! Use the 'create' command to create some projects.")

@@ -35,8 +35,8 @@ class Project(yaml.YAMLObject):
 
     @staticmethod
     def append_project(project):
-        yaml_dict = Project.project_exists(project.name)
-        yaml_dict[project.name] = project
+        yaml_dict = Project.project_exists(project.project_name)
+        yaml_dict[project.project_name] = project
         with open(Paths.PROJECT_FILE_PATH, 'a') as f:
             yaml.dump(yaml_dict, f)
 
