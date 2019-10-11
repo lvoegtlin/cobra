@@ -79,7 +79,7 @@ class Config(yaml.YAMLObject):
             yaml_file = yaml.safe_load_all(vcs)
             for vcs_list in yaml_file:
                 for k, v in vcs_list.items():
-                    self._vcses.append(VCS(k, v['connection_types'], v['token_url']))
+                    self._vcses.append(VCS(k, v['connection_types']))
 
     # PUBLIC
     def save_user_cred(self):

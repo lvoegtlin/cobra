@@ -5,10 +5,9 @@ import yaml
 class VCS(yaml.YAMLObject):
     yaml_tag = u'!VCS'
 
-    def __init__(self, name, connection_types, token_url):
+    def __init__(self, name, connection_types):
         self.name = name
         self.connection_types = self.__init_connection_types(connection_types)
-        self.token_create_url = token_url
 
     def __repr__(self):
         return "{}".format(self.name)
@@ -30,14 +29,6 @@ class VCS(yaml.YAMLObject):
     @connection_types.setter
     def connection_types(self, value):
         self._connection_types = value
-
-    @property
-    def token_create_url(self):
-        return self._token_create_url
-
-    @token_create_url.setter
-    def token_create_url(self, value):
-        self._token_create_url = value
 
     @staticmethod
     def __init_connection_types(connection_types):
