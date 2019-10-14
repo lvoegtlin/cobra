@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='pocr',
-      version='0.1',
+      version='0.1.1',
       description='A tool to create and maintain your python projects',
       url='https://github.com/lvoegtlin/pocr',
       author='Lars Voegtlin',

@@ -37,7 +37,8 @@ def get_params():
     # list subcommand
     list_parser = subparsers.add_parser("list", help="Lists all existing pocr projects")
 
-    # update subcommand
+    # # update subcommand
+    # update_parser = subparsers.add_parser('update', help="Updates a existing pocr project")
 
     # remove subcommand
     remove_parser = subparsers.add_parser('remove', help="Remove a pocr project")

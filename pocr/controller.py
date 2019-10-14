@@ -34,6 +34,7 @@ def main():
 
     if first_usage():
         print('pocr not installed! us the command "pocr --install" first')
+        sys.exit(1)
 
     if args.command == 'create':
         create(**args.__dict__)
