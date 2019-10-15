@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='pocr',
-      version='0.1.1',
+      version='0.1.2',
       description='A tool to create and maintain your python projects',
       url='https://github.com/lvoegtlin/pocr',
       author='Lars Voegtlin',
@@ -12,6 +12,6 @@ setup(name='pocr',
           'console_scripts': ['pocr=pocr.controller:entry_point'],
       },
       install_requires=['keyring==19.0.1', 'pyyaml==5.1.2', 'PyInquirer==1.0.3', 'prompt_toolkit==1.0.14',
-                        'pygithub==1.43.8', 'gitpython==3.0.3', 'tabulate==0.8.5'],
+                        'pygithub==1.43.6', 'gitpython==3.0.3', 'tabulate==0.8.5'],
       python_requires='>=3',
       zip_safe=False)

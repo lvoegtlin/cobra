@@ -76,3 +76,4 @@ target/
 # exclude data from source control by default
 src/data/
 output/
+/conda_builds/
