@@ -2,6 +2,7 @@ import copy
 
 import yaml
 import keyring
+import pkg_resources
 
 from pocr.utils.constants import Paths
 from pocr.vcs import VCS
@@ -75,11 +76,11 @@ class Config(yaml.YAMLObject):
 
     # PRIVATE
     def __load_vcs(self):
-        with open("./pocr/conf/vcs.yml", 'r') as vcs:
-            yaml_file = yaml.safe_load_all(vcs)
-            for vcs_list in yaml_file:
-                for k, v in vcs_list.items():
-                    self._vcses.append(VCS(k, v['connection_types']))
+        vcs = pkg_resources.resource_string(__name__, Paths.PACKAGE_VCS_PATH)
+        yaml_file = yaml.safe_load_all(vcs.decode('UTF-8'))
+        for vcs_list in yaml_file:
+            for k, v in vcs_list.items():
+                self._vcses.append(VCS(k, v['connection_types']))
 
     # PUBLIC
     def save_user_cred(self):

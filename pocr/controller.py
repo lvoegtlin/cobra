@@ -2,13 +2,14 @@ import sys
 import subprocess
 import shutil
 import os
+import pkg_resources
 
 import git
 from github import UnknownObjectException
 from tabulate import tabulate
 
 from pocr.conf.config import Config
-from pocr.utils.constants import Texts
+from pocr.utils.constants import Texts, Paths
 from pocr.project import Project
 from pocr.utils.command_line import get_params
 from pocr.utils.exceptions import ProjectNameAlreadyExists, CondaAlreadyExists
@@ -113,7 +114,8 @@ def create(project_name, python_version, git_hook, **kwargs):
         os.system("conda create -y {}".format(' '.join(arguments)))
 
         if git_hook:
-            shutil.copy('./pocr/utils/pre-commit', os.path.join(os.getcwd(), '.git', 'hooks', 'pre-commit'))
+            shutil.copy(pkg_resources.resource_stream(__name__, Paths.PACKAGE_GIT_HOOK_PATH),
+                        os.path.join(os.getcwd(), '.git', 'hooks', 'pre-commit'))
 
     # save path, conda name, name, git link, python version into project file
     Project.append_project(

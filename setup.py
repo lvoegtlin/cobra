@@ -11,7 +11,9 @@ setup(name='pocr',
       entry_points={
           'console_scripts': ['pocr=pocr.controller:entry_point'],
       },
+      include_package_data=True,
+      package_data={'': ['*.yml']},
       install_requires=['keyring==19.0.1', 'pyyaml==5.1.2', 'PyInquirer==1.0.3', 'prompt_toolkit==1.0.14',
-                        'pygithub==1.43.6', 'gitpython==3.0.3', 'tabulate==0.8.5'],
+                        'pygithub==1.43.6', 'gitpython==3.0.3', 'tabulate==0.8.5', 'setuptools'],
       python_requires='>=3',
       zip_safe=False)

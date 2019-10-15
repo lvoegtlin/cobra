@@ -6,6 +6,8 @@ class Paths:
     POCR_FOLDER = os.path.expanduser("~/.pocr")
     CONF_FILE_PATH = os.path.join(POCR_FOLDER, "config")
     PROJECT_FILE_PATH = os.path.join(POCR_FOLDER, "projects")
+    PACKAGE_VCS_PATH = '/vcs.yml'
+    PACKAGE_GIT_HOOK_PATH = '/'.join(('utils', 'pre-commit'))
 
 
 class Structures:
