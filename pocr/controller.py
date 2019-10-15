@@ -152,7 +152,9 @@ def remove(name, folder, repo, conda, remove_all, **kwargs):
     user = get_github_user()
 
     if remove_all:
-        folder, repo, conda = True
+        repo = True
+        conda = True
+        folder = True
 
     if repo:
         try:

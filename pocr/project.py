@@ -1,3 +1,4 @@
+import os
 import yaml
 
 from pocr.utils.constants import Paths
@@ -8,7 +9,7 @@ class Project(yaml.YAMLObject):
     yaml_tag = u'!Project'
 
     def __init__(self, project_path=None, project_name=None, conda_name=None, repo_name=None, vcs=None, python_version=None):
-        self.project_path = project_path
+        self.project_path = os.path.join(project_path, project_name)
         self.project_name = project_name
         self.conda_name = conda_name
         self.repo_name = repo_name
@@ -46,8 +47,13 @@ class Project(yaml.YAMLObject):
             yaml_dict = yaml.load(f, Loader=yaml.Loader) or {}
         project = yaml_dict[project_name]
         del yaml_dict[project_name]
-        with open(Paths.PROJECT_FILE_PATH, 'w') as f:
-            yaml.dump(yaml_dict, f)
+
+        if yaml_dict:
+            with open(Paths.PROJECT_FILE_PATH, 'w') as f:
+                yaml.dump(yaml_dict, f)
+        else:
+            open(Paths.PROJECT_FILE_PATH, 'w').close()
+
         return project
 
     @staticmethod
