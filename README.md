@@ -136,3 +136,9 @@ optional arguments:
   -a, --remove-all      Remove everything (repo, folder, conda)
 
 ```
+
+### TODO
+- [ ] Finish git hook
+- [ ] Create repo with template
+- [ ] Create conda Dockerfile
+- [ ] Automatically connect github with dockerhub for automatic build
