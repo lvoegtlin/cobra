@@ -1,5 +1,5 @@
 {% set name = "pocr" %}
-{% set version = "0.1.2" %}
+{% set version = "0.1.4" %}
 
 package:
   name: "{{ name|lower }}"
@@ -26,6 +26,7 @@ requirements:
     - python
     - pyyaml ==5.1.2
     - tabulate ==0.8.5
+    - setuptools
   run:
     - gitpython ==3.0.3
     - keyring ==19.0.1
