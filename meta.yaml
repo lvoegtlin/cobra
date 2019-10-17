@@ -6,14 +6,17 @@ package:
   version: "{{ version }}"
 
 source:
-  url: "https://files.pythonhosted.org/packages/1d/d4/e0cfeabf1c7542ccbdc83344bed7e57b2bfb48544463cfc4b5b4a13ca35c/{{ name }}-{{ version }}.tar.gz"
-  sha256: "8bb515d15ace9ede7495bfa967eac361786393b1a6f118dda69919af5fa7fe53"
+  url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
+  sha256: "0fb743ffd9b754015e4d47e36e2477012ec2723cdd383d17df95cebb99598ecf"
 
 build:
   number: 0
   entry_points:
     - pocr=pocr.controller:entry_point
   script: "{{ PYTHON }} -m pip install . --no-deps --ignore-installed -vv "
+  always_include_files:
+    - pocr/con/vcs.yml
+    - pocr/utils/pre-commit
 
 requirements:
   host:
@@ -26,6 +29,7 @@ requirements:
     - python
     - pyyaml ==5.1.2
     - tabulate ==0.8.5
+    - readme-renderer>=21.0
     - setuptools
   run:
     - gitpython ==3.0.3
@@ -36,6 +40,7 @@ requirements:
     - python
     - pyyaml ==5.1.2
     - tabulate ==0.8.5
+    - readme-renderer>=21.0
     - setuptools
 
 test:
@@ -57,4 +62,4 @@ about:
 
 extra:
   recipe-maintainers:
-    - your-github-id-here
+    - lvoegtlin

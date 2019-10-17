@@ -14,6 +14,6 @@ setup(name='pocr',
       include_package_data=True,
       package_data={'': ['*.yml']},
       install_requires=['keyring==19.0.1', 'pyyaml==5.1.2', 'PyInquirer==1.0.3', 'prompt_toolkit==1.0.14',
-                        'pygithub==1.43.6', 'gitpython==3.0.3', 'tabulate==0.8.5', 'readme-renderer==21.0'],
+                        'pygithub==1.43.6', 'gitpython==3.0.3', 'tabulate==0.8.5', 'readme-renderer>=21.0'],
       python_requires='>=3',
       zip_safe=False)
