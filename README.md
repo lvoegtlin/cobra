@@ -8,7 +8,7 @@ It creates a conda environment and a github repository based on your requirement
 
 
 ## Requirements
-* Python > 3.5
+* Python >= 3.6
 * [Conda](https://docs.conda.io/en/latest/miniconda.html)
 * [Github](https://github.com)
 
