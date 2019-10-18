@@ -2,8 +2,11 @@
 # inspired by https://medium.com/@giswqs/building-a-conda-package-and-uploading-it-to-anaconda-cloud-6a3abd1c5c52
 
 # clean up
+echo "clean up old builds..."
 conda_folder="conda_builds"
-rm -rf $conda_folder
+rm -rf ./$conda_folder/
+rm -rf build
+rm -rf dist
 
 # adjust the Python versions you would like to build
 array=( 3.5 3.6 3.7 )
