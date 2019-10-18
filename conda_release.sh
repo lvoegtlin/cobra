@@ -4,7 +4,7 @@
 # clean up
 echo "clean up old builds..."
 conda_folder="conda_builds"
-rm -rf ./$conda_folder/
+rm -rf ./$conda_folder/*
 rm -rf build
 rm -rf dist
 
