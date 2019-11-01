@@ -114,8 +114,8 @@ def create(project_name, python_version, git_hook, **kwargs):
         os.system("conda create -y {}".format(' '.join(arguments)))
 
         if git_hook:
-            shutil.copy(pkg_resources.resource_stream(__name__, Paths.PACKAGE_GIT_HOOK_PATH),
-                        os.path.join(os.getcwd(), '.git', 'hooks', 'pre-commit'))
+            shutil.copy(pkg_resources.resource_filename(__name__, Paths.PACKAGE_GIT_HOOK_PATH),
+                        os.path.join(os.getcwd(), repo_name, '.git', 'hooks', 'pre-commit'))
 
     # save path, conda name, name, git link, python version into project file
     Project.append_project(
