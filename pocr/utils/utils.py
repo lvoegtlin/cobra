@@ -68,6 +68,8 @@ def user_password_dialog(error=None):
     try:
         if not error:
             github, username, password = dialog_username_password()
+            auth = github.get_user().create_authorization(scopes=Structures.AUTH_SCOPES,
+                                                          note='pocr')
         else:
             if error['key'] == 0:
                 print(error['message'])
@@ -83,8 +85,8 @@ def user_password_dialog(error=None):
                                                               onetime_password=tfa,
                                                               note='pocr')
 
-            sec = auth.token or ""
-            github = Github(sec)
+        sec = auth.token or ""
+        github = Github(sec)
 
         # to test if the github object has a correct authentication
         github.get_user().id
