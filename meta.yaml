@@ -1,13 +1,13 @@
 {% set name = "pocr" %}
-{% set version = "0.1.4" %}
+{% set version = "0.1.5" %}
 
 package:
   name: "{{ name|lower }}"
   version: "{{ version }}"
 
 source:
-  url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
-  sha256: "0fb743ffd9b754015e4d47e36e2477012ec2723cdd383d17df95cebb99598ecf"
+  git_url: https://github.com/lvoegtlin/pocr.git
+  git_tag: master
 
 build:
   number: 0
@@ -15,7 +15,7 @@ build:
     - pocr=pocr.controller:entry_point
   script: "{{ PYTHON }} -m pip install . --no-deps --ignore-installed -vv "
   always_include_files:
-    - pocr/con/vcs.yml
+    - pocr/conf/vcs.yml
     - pocr/utils/pre-commit
 
 requirements:
