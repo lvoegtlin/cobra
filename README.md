@@ -104,7 +104,9 @@ optional arguments:
                         If you already have a conda environment for the
                         project. Enter the name.
   -gh, --git-hook       Install a pre-commit git hook which updates the conda
-                        environment file before you commit
+                        environment file before you commit. This is just
+                        working, if the current environment is the 
+                        environment of the project!
 
 ```
 
