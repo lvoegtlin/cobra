@@ -1,7 +1,14 @@
 #!/bin/sh
 
-# export the environment again
-
-conda env export > environment.yml
+# check if there is a environment active
+if [ $CONDA_DEFAULT_ENV = "base" ] && [ $CONDA_DEFAULT_ENV = "" ];
+then
+    echo "\nThe base environment or no environment is active.\n"
+    echo "Activate the fitting environment and commit again!"
+else
+    # export the environment again
+    echo "\nExporting environment...\n"
+    conda env export > environment.yml
+fi
 
 exit 1
