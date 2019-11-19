@@ -19,12 +19,6 @@ You can use the base conda to install pocr.
 ## Installation
 You have three different options to install pocr. Just always keep in mind that the python version need to be > 3.5.
 
-#### Uninstallation
-If you have to re-install pocr:
-1. Delete the access token from your github page  (Settings -> Developer settings -> Personal access tokens -> delete (pocr)
-2. ```rm -rf ~/.pocr```
-3. ```pip3/pip/conda uninstall pocr```
-
 ### pip
 If your pip path is pointing to the pip3 you can also you just pip.
 ```
@@ -58,6 +52,13 @@ Then execute the command
 pocr --install
 ```
 and follow the instructions.
+
+
+## Uninstallation
+If you have to re-install or uninstall pocr:
+1. Delete the access token from your github page  (Settings -> Developer settings -> Personal access tokens -> delete (pocr)
+2. ```rm -rf ~/.pocr```
+3. ```pip3/pip/conda uninstall pocr```
 
 ## Usage
 ```
