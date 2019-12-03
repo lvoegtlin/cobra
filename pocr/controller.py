@@ -94,19 +94,25 @@ def create(project_name, python_version, git_hook, **kwargs):
 
     if not kwargs['test']:
         if git_exist:
+            print("You provided a git repo...")
             repo_name = kwargs['repo']
         else:
+            print("Creating a repo...")
             user.create_repo(project_name, auto_init=True)
+            print("Repo creation successful")
 
         # pull repo
+        print("Pulling the repo...")
         cwd = os.getcwd()
         git_url = "{}{}/{}.git".format(Config.getInstance().connection_type.url, Config.getInstance().username, repo_name)
         git.Git(cwd).clone(git_url)
+        print("Pulling done")
 
         if conda_exist:
             conda_name = kwargs['conda']
 
         # create conda
+        print("Creating conda environment...")
         arguments = ["--name", conda_name]
         if python_version:
             arguments.append("python={}".format(python_version))
