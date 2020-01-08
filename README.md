@@ -1,6 +1,5 @@
 # Project Organization and Creation (pocr)
 
-[![Anaconda-Server Badge](https://anaconda.org/ecrop/pyinquirer/badges/installer/conda.svg)](https://conda.anaconda.org/ecrop)
 [![PyPI version](https://badge.fury.io/py/pocr.svg)](https://badge.fury.io/py/pocr)
 
 pocr is a project creation and management tool for python and git.
@@ -31,17 +30,6 @@ pocr --install
 ```
 and follow the instructions.
 
-### conda
-```
-conda install -c ecrop pocr
-```
-
-Then execute the command
-```
-pocr --install
-```
-and follow the instructions.
-
 ### github
 1. Download the sourcecode from [github](https://github.com/lvoegtlin/pocr).
 2. Move into the pocr root directory (folder which contains the setup.py file) ```cd pocr```
@@ -58,7 +46,7 @@ and follow the instructions.
 If you have to re-install or uninstall pocr:
 1. Delete the access token from your github page  (Settings -> Developer settings -> Personal access tokens -> delete (pocr)
 2. ```rm -rf ~/.pocr```
-3. ```pip3/pip/conda uninstall pocr```
+3. ```pip3/pip uninstall pocr```
 
 ## Usage
 ```
