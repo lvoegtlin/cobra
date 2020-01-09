@@ -187,11 +187,16 @@ def remove(name, folder, repo, conda, remove_all, **kwargs):
             check_env_exists(project.conda_name)
             print("Conda environment does not exist")
         except CondaAlreadyExists:
-            # deactivate env
-            subprocess.check_output(['conda', 'deactivate'])
-            # remove env
-            subprocess.check_output(['conda', 'env', 'remove', '--name', project.conda_name])
-            print("Successfully removed conda environment")
+            try:
+                # remove env
+                subprocess.check_output(['conda', 'env', 'remove', '--name', project.conda_name])
+                print("Successfully removed conda environment")
+            except subprocess.CalledProcessError:
+                print('Environment was not deactivated!')
+                print('Remove the environment by hand with the following command:\n')
+                print('conda deactivate\n')
+                print('conda env remove --name ' + project.conda_name + '-y')
+                print('\n\n\n')
 
 
 def entry_point():
