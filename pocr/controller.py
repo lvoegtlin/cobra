@@ -119,6 +119,9 @@ def create(project_name, python_version, git_hook, **kwargs):
         # can not use conda api because it does not work
         os.system("conda create -y {}".format(' '.join(arguments)))
 
+        # initial environment file creating
+        os.system("touch " + os.path.join(os.getcwd(), repo_name, "environment.yml"))
+
         if git_hook:
             shutil.copy(pkg_resources.resource_filename(__name__, Paths.PACKAGE_GIT_HOOK_PATH),
                         os.path.join(os.getcwd(), repo_name, '.git', 'hooks', 'pre-commit'))
@@ -184,6 +187,9 @@ def remove(name, folder, repo, conda, remove_all, **kwargs):
             check_env_exists(project.conda_name)
             print("Conda environment does not exist")
         except CondaAlreadyExists:
+            # deactivate env
+            subprocess.check_output(['conda', 'deactivate'])
+            # remove env
             subprocess.check_output(['conda', 'env', 'remove', '--name', project.conda_name])
             print("Successfully removed conda environment")
 
