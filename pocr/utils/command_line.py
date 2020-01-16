@@ -31,10 +31,8 @@ def get_params():
                                required=False,
                                type=str)
     create_parser.add_argument('-gh', '--git-hook',
-                               help="Install a pre-commit git hook which updates the conda environment file"
-                                    " before you commit. This is just working, if the current environment is the "
-                                    "environment of the project!",
-                               action="store_true")
+                               help="Does not install a pre-push git hook.",
+                               action="store_false")
     # list subcommand
     list_parser = subparsers.add_parser("list", help="Lists all existing pocr projects")
 
