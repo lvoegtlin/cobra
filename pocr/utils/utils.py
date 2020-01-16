@@ -10,7 +10,7 @@ from github import Github, GithubException, UnknownObjectException
 from pocr.conf.config import Config
 from pocr.project import Project
 from pocr.utils.constants import Texts, Structures, Paths
-from pocr.utils.exceptions import CondaAlreadyExists, ProjectNameAlreadyExists, RepoAlreadyExists
+from pocr.utils.exceptions import CondaAlreadyExists, ProjectNameAlreadyExists, RepoAlreadyExists, FolderAlreadyExists
 
 
 def get_object_from_list_by_name(filter_str, input_list):
@@ -108,11 +108,13 @@ def user_password_dialog(error=None):
         return error_msg
 
 
-def duplication_check(project_name, github_user, git_check=True, conda_check=True):
+def duplication_check(project_name, github_user, git_check=True, conda_check=True, folder_check=True):
     # Check if project name already exists
     try:
         # project check
         Project.project_exists(project_name)
+        if folder_check:
+            check_folder_exists(project_name)
         if git_check:
             # github check
             check_repo_exists(project_name, github_user)
@@ -129,6 +131,15 @@ def duplication_check(project_name, github_user, git_check=True, conda_check=Tru
     except CondaAlreadyExists:
         print("There exists already a conda environment named {}".format(project_name))
         sys.exit(1)
+    except FolderAlreadyExists:
+        print("There exists already a folder named {} in this directory".format(project_name))
+        sys.exit(1)
+
+
+def check_folder_exists(project_name):
+    cwd = os.getcwd()
+    if os.path.isdir(os.path.join(cwd, project_name)):
+        raise FolderAlreadyExists
 
 
 def check_repo_exists(name, github_user):

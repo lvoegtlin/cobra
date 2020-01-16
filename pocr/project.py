@@ -35,6 +35,11 @@ class Project(yaml.YAMLObject):
             yaml.dump(yaml_dict, f)
 
     @staticmethod
+    def create_project_file(project):
+        with open(os.path.join(project.project_path, ".pocr"), 'w') as f:
+            yaml.dump(project, f)
+
+    @staticmethod
     def append_project(project):
         yaml_dict = Project.project_exists(project.project_name)
         yaml_dict[project.project_name] = project

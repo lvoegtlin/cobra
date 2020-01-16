@@ -3,6 +3,10 @@ class ProjectNameAlreadyExists(Exception):
     pass
 
 
+class FolderAlreadyExists(Exception):
+    pass
+
+
 class CondaAlreadyExists(Exception):
     pass
 

@@ -119,17 +119,18 @@ def create(project_name, python_version, git_hook, **kwargs):
         # can not use conda api because it does not work
         os.system("conda create -y {}".format(' '.join(arguments)))
 
-        # initial environment file creating
-        os.system("touch " + os.path.join(os.getcwd(), repo_name, "environment.yml"))
-
         if git_hook:
             shutil.copy(pkg_resources.resource_filename(__name__, Paths.PACKAGE_GIT_HOOK_PATH),
-                        os.path.join(os.getcwd(), repo_name, '.git', 'hooks', 'pre-commit'))
+                        os.path.join(os.getcwd(), repo_name, '.git', 'hooks', 'pre-push'))
+
+    # create the pocr project
+    project = Project(os.getcwd(), project_name, conda_name, repo_name, Config.getInstance().used_vcs, python_version)
+
+    # save file in pocr folder
+    Project.create_project_file(project)
 
     # save path, conda name, name, git link, python version into project file
-    Project.append_project(
-        Project(os.getcwd(), project_name, conda_name, repo_name, Config.getInstance().used_vcs, python_version)
-    )
+    Project.append_project(project)
 
 
 def listing(**kwargs):

@@ -1,0 +1,45 @@
+#!/bin/sh
+
+export_env () {
+    # export the environment again
+    echo "\nExporting environment ${CONDA_DEFAULT_ENV}...\n"
+    conda env export > environment.yml
+    git add environment.yml
+    exit 0
+}
+
+wrong_env () {
+    echo "\nThe base environment or the wrong environment (not fitting with the environment.yml file) or no environment is active.\n"
+    echo "Activate the fitting environment and commit again!"
+    exit 1
+}
+
+FILE=environment.yml
+# check if the environment file exists
+if [[ ! -f ${FILE} ]];
+then
+    echo "No environment.yml file found.\nCreating one..."
+    touch environment.yml
+fi
+
+# get the first line of the current environment file
+line=$(head -n 1 ${FILE})
+
+if [[ ${line} = "" ]];
+then
+    # when the env file is empty
+    if [[ ${CONDA_DEFAULT_ENV} != "base" ]] && [[ ${CONDA_DEFAULT_ENV} != "" ]];
+    then
+        export_env
+    else
+        wrong_env
+    fi
+else
+    env_name=$(echo ${line} | sed 's/^name: \(.*\)$/\1/')
+    if [[ ${CONDA_DEFAULT_ENV} = ${env_name} ]];
+    then
+        export_env
+    else
+        wrong_env
+    fi
+fi
