@@ -8,6 +8,12 @@ rm -rf dist
 echo "build dist and wheel..."
 python setup.py sdist bdist_wheel
 
-# upload to pypi
-echo "upload to pypi..."
-twine upload dist/*
+if [[ $1 == "--test" ]];
+then
+    echo "upload to test pypi..."
+    twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+else
+    # upload to pypi
+    echo "upload to pypi..."
+    twine upload dist/*
+fi
