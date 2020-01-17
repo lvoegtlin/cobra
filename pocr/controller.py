@@ -1,20 +1,21 @@
 import sys
-import subprocess
-import shutil
-import os
-import pkg_resources
 
 import git
+import os
+import pkg_resources
+import shutil
+import subprocess
 from github import UnknownObjectException
 from tabulate import tabulate
 
 from pocr.conf.config import Config
-from pocr.utils.constants import Texts, Paths
 from pocr.project import Project
 from pocr.utils.command_line import get_params
+from pocr.utils.constants import Texts, Paths
 from pocr.utils.exceptions import ProjectNameAlreadyExists, CondaAlreadyExists
 from pocr.utils.utils import get_object_from_list_by_name, ask_questions, user_password_dialog, \
-    duplication_check, create_files_folders, check_requirements, first_usage, get_github_user, check_env_exists
+    duplication_check, create_files_folders, check_requirements, first_usage, get_github_user, check_env_exists, \
+    delete_path
 
 
 def main():
@@ -121,7 +122,7 @@ def create(project_name, python_version, git_hook, **kwargs):
 
         if git_hook:
             shutil.copy(pkg_resources.resource_filename(__name__, Paths.PACKAGE_GIT_HOOK_PATH),
-                        os.path.join(os.getcwd(), repo_name, '.git', 'hooks', 'pre-push'))
+                        os.path.join(os.getcwd(), repo_name, '.git', 'hooks', 'post-commit'))
 
     # create the pocr project
     project = Project(os.getcwd(), project_name, conda_name, repo_name, Config.getInstance().used_vcs, python_version)
@@ -176,13 +177,14 @@ def remove(name, folder, repo, conda, remove_all, **kwargs):
                 print("Repo could not be deleted! Not existing")
             if e.status == 403:
                 print('Permission problem, please reinstall pocr (--clean; --install)')
+
     if folder:
-        try:
-            shutil.rmtree(project.project_path)
-            print("Successfully removed folders")
-        except PermissionError:
-            print("Permission error for deleting the project {} folder."
-                  " Please delete it by hand or try again.".format(project.project_path))
+        delete_path(project.project_path)
+        print("Successfully removed folders")
+    else:
+        delete_path(os.path.join(project.project_path, ".pocr"))
+        print("Removed .pocr file")
+
     if conda:
         try:
             check_env_exists(project.conda_name)

@@ -186,3 +186,15 @@ def get_github_user():
     github = Github(Config.getInstance().sec)
     user = github.get_user()
     return user
+
+
+def delete_path(path: str):
+    # check if path is pointing to a file or folder
+    try:
+        if os.path.isfile(path):
+            os.remove(path)
+        else:
+            shutil.rmtree(path)
+    except PermissionError:
+        print("Permission error for deleting the folder."
+              " Please delete it by hand or try again.")
