@@ -13,3 +13,11 @@ class CondaAlreadyExists(Exception):
 
 class RepoAlreadyExists(Exception):
     pass
+
+
+class NoPocrFileFound(Exception):
+    pass
+
+
+class NoEnvironmentFileFound(Exception):
+    pass

@@ -1,10 +1,11 @@
 import sys
-
 import git
 import os
 import pkg_resources
 import shutil
 import subprocess
+import yaml
+
 from github import UnknownObjectException
 from tabulate import tabulate
 
@@ -12,7 +13,7 @@ from pocr.conf.config import Config
 from pocr.project import Project
 from pocr.utils.command_line import get_params
 from pocr.utils.constants import Texts, Paths
-from pocr.utils.exceptions import ProjectNameAlreadyExists, CondaAlreadyExists
+from pocr.utils.exceptions import ProjectNameAlreadyExists, CondaAlreadyExists, NoPocrFileFound, NoEnvironmentFileFound
 from pocr.utils.utils import get_object_from_list_by_name, ask_questions, user_password_dialog, \
     duplication_check, create_files_folders, check_requirements, first_usage, get_github_user, check_env_exists, \
     delete_path
@@ -78,7 +79,7 @@ def installation():
     Config.getInstance().save_config()
 
 
-def create(project_name, python_version, git_hook, **kwargs):
+def create(project_name, python_version, git_hook, existing, **kwargs):
     git_exist = 'repo' in kwargs
     conda_exist = 'conda' in kwargs
     conda_name = project_name
@@ -93,42 +94,55 @@ def create(project_name, python_version, git_hook, **kwargs):
     # TODO give option to connect existing github repo or/and conda env
     duplication_check(project_name, user, not git_exist, not conda_exist)
 
-    if not kwargs['test']:
-        if git_exist:
-            print("You provided a git repo...")
-            repo_name = kwargs['repo']
+    if existing:
+        # search for the .pocr file
+        if os.path.exists(".pocr"):
+            with open(".pocr", 'r') as f:
+                project = yaml.load(f, Loader=yaml.Loader)
+            # create the environment
+            if os.path.exists("environment.yml"):
+                os.system("conda env create -f environment.yml")
+            else:
+                raise NoEnvironmentFileFound()
         else:
-            print("Creating a repo...")
-            user.create_repo(project_name, auto_init=True)
-            print("Repo creation successful")
+            raise NoPocrFileFound()
+    else:
+        if not kwargs['test']:
+            if git_exist:
+                print("You provided a git repo...")
+                repo_name = kwargs['repo']
+            else:
+                print("Creating a repo...")
+                user.create_repo(project_name, auto_init=True)
+                print("Repo creation successful")
 
-        # pull repo
-        print("Pulling the repo...")
-        cwd = os.getcwd()
-        git_url = "{}{}/{}.git".format(Config.getInstance().connection_type.url, Config.getInstance().username, repo_name)
-        git.Git(cwd).clone(git_url)
-        print("Pulling done")
+            # pull repo
+            print("Pulling the repo...")
+            cwd = os.getcwd()
+            git_url = "{}{}/{}.git".format(Config.getInstance().connection_type.url, Config.getInstance().username, repo_name)
+            git.Git(cwd).clone(git_url)
+            print("Pulling done")
 
-        if conda_exist:
-            conda_name = kwargs['conda']
+            if conda_exist:
+                conda_name = kwargs['conda']
 
-        # create conda
-        print("Creating conda environment...")
-        arguments = ["--name", conda_name]
-        if python_version:
-            arguments.append("python={}".format(python_version))
-        # can not use conda api because it does not work
-        os.system("conda create -y {}".format(' '.join(arguments)))
+            # create conda
+            print("Creating conda environment...")
+            arguments = ["--name", conda_name]
+            if python_version:
+                arguments.append("python={}".format(python_version))
+            # can not use conda api because it does not work
+            os.system("conda create -y {}".format(' '.join(arguments)))
 
-        if git_hook:
-            shutil.copy(pkg_resources.resource_filename(__name__, Paths.PACKAGE_GIT_HOOK_PATH),
-                        os.path.join(os.getcwd(), repo_name, '.git', 'hooks', 'post-commit'))
+            if git_hook:
+                shutil.copy(pkg_resources.resource_filename(__name__, Paths.PACKAGE_GIT_HOOK_PATH),
+                            os.path.join(os.getcwd(), repo_name, '.git', 'hooks', 'post-commit'))
 
-    # create the pocr project
-    project = Project(os.getcwd(), project_name, conda_name, repo_name, Config.getInstance().used_vcs, python_version)
+            # create the pocr project
+            project = Project(os.getcwd(), project_name, conda_name, repo_name, Config.getInstance().used_vcs, python_version)
 
-    # save file in pocr folder
-    Project.create_project_file(project)
+            # save file in pocr folder
+            Project.create_project_file(project)
 
     # save path, conda name, name, git link, python version into project file
     Project.append_project(project)

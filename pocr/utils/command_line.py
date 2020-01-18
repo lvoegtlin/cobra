@@ -33,6 +33,9 @@ def get_params():
     create_parser.add_argument('-gh', '--git-hook',
                                help="Does not install a post-commit git hook.",
                                action="store_false")
+    create_parser.add_argument('-e', '--existing',
+                               help="Searches in the current directory for a .pocr file and creates a project based on this",
+                               action="store_true")
     # list subcommand
     list_parser = subparsers.add_parser("list", help="Lists all existing pocr projects")
 
