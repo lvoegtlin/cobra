@@ -1,22 +1,20 @@
-import sys
-import git
 import os
-import pkg_resources
 import shutil
 import subprocess
-import yaml
+import sys
 
+import pkg_resources
 from github import UnknownObjectException
 from tabulate import tabulate
 
 from pocr.conf.config import Config
 from pocr.project import Project
 from pocr.utils.command_line import get_params
-from pocr.utils.constants import Texts, Paths
-from pocr.utils.exceptions import ProjectNameAlreadyExists, CondaAlreadyExists, NoPocrFileFound, NoEnvironmentFileFound
+from pocr.utils.constants import Texts, Paths, Structures
+from pocr.utils.exceptions import ProjectNameAlreadyExists
 from pocr.utils.utils import get_object_from_list_by_name, ask_questions, user_password_dialog, \
     duplication_check, create_files_folders, check_requirements, first_usage, get_github_user, check_env_exists, \
-    delete_path
+    delete_path, create_repo, create_folder, create_environment
 
 
 def main():
@@ -79,73 +77,53 @@ def installation():
     Config.getInstance().save_config()
 
 
-def create(project_name, python_version, git_hook, existing, **kwargs):
-    git_exist = 'repo' in kwargs
-    conda_exist = 'conda' in kwargs
-    conda_name = project_name
-    repo_name = project_name
-
+def create(name, python_version, from_file, **kwargs):
     # load config
     Config.getInstance().load_config()
 
-    user = get_github_user()
-
-    # checks if the different modules already exists
-    # TODO give option to connect existing github repo or/and conda env
-    duplication_check(project_name, user, not git_exist, not conda_exist)
-
-    if existing:
-        # search for the .pocr file
-        if os.path.exists(".pocr"):
-            with open(".pocr", 'r') as f:
-                project = yaml.load(f, Loader=yaml.Loader)
-            # create the environment
-            if os.path.exists("environment.yml"):
-                os.system("conda env create -f environment.yml")
-            else:
-                raise NoEnvironmentFileFound()
-        else:
-            raise NoPocrFileFound()
+    if from_file:
+        print("Creating project from file")
+        project = Project.project_from_file()
+        print(".pocr file found. Continue processing...")
+        name = project.project_name
     else:
-        if not kwargs['test']:
-            if git_exist:
-                print("You provided a git repo...")
-                repo_name = kwargs['repo']
-            else:
-                print("Creating a repo...")
-                user.create_repo(project_name, auto_init=True)
-                print("Repo creation successful")
+        project = Project(os.getcwd(),
+                          name,
+                          name,
+                          name,
+                          Config.getInstance().username,
+                          Config.getInstance().used_vcs,
+                          python_version)
 
-            # pull repo
-            print("Pulling the repo...")
-            cwd = os.getcwd()
-            git_url = "{}{}/{}.git".format(Config.getInstance().connection_type.url, Config.getInstance().username, repo_name)
-            git.Git(cwd).clone(git_url)
-            print("Pulling done")
+    # check for if project exists
+    Project.project_exists(name)
 
-            if conda_exist:
-                conda_name = kwargs['conda']
+    # creat missing elements
+    create_project_parts(project, **kwargs)
 
-            # create conda
-            print("Creating conda environment...")
-            arguments = ["--name", conda_name]
-            if python_version:
-                arguments.append("python={}".format(python_version))
-            # can not use conda api because it does not work
-            os.system("conda create -y {}".format(' '.join(arguments)))
-
-            if git_hook:
-                shutil.copy(pkg_resources.resource_filename(__name__, Paths.PACKAGE_GIT_HOOK_PATH),
-                            os.path.join(os.getcwd(), repo_name, '.git', 'hooks', 'post-commit'))
-
-            # create the pocr project
-            project = Project(os.getcwd(), project_name, conda_name, repo_name, Config.getInstance().used_vcs, python_version)
-
-            # save file in pocr folder
-            Project.create_project_file(project)
+    # save file in pocr folder
+    Project.create_project_file(project)
 
     # save path, conda name, name, git link, python version into project file
     Project.append_project(project)
+
+
+def create_project_parts(project, git_hook, **kwargs):
+    # check for modules existing
+    check_mask = duplication_check(project)
+    MODULE_FUNCTIONS = [create_repo, create_folder, create_environment]
+
+    for i, mask in enumerate(check_mask):
+        if not mask:
+            MODULE_FUNCTIONS[i](project)
+
+    if git_hook:
+        if os.path.basename(os.getcwd()) == project.project_name:
+            copy_to = os.path.join(os.getcwd(), '.git', 'hooks', 'post-commit')
+        else:
+            copy_to = os.path.join(os.getcwd(), project.project_name, '.git', 'hooks', 'post-commit')
+
+        shutil.copy(pkg_resources.resource_filename(__name__, Paths.PACKAGE_GIT_HOOK_PATH), copy_to)
 
 
 def listing(**kwargs):
@@ -200,10 +178,7 @@ def remove(name, folder, repo, conda, remove_all, **kwargs):
         print("Removed .pocr file")
 
     if conda:
-        try:
-            check_env_exists(project.conda_name)
-            print("Conda environment does not exist")
-        except CondaAlreadyExists:
+        if check_env_exists(project.conda_name):
             try:
                 # remove env
                 subprocess.check_output(['conda', 'env', 'remove', '-y', '--name', project.conda_name])
@@ -214,6 +189,8 @@ def remove(name, folder, repo, conda, remove_all, **kwargs):
                 print('conda deactivate\n')
                 print('conda env remove --name ' + project.conda_name + '-y')
                 print('\n')
+        else:
+            print("Conda environment does not exist")
 
 
 def entry_point():

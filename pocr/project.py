@@ -2,17 +2,18 @@ import os
 import yaml
 
 from pocr.utils.constants import Paths
-from pocr.utils.exceptions import ProjectNameAlreadyExists
+from pocr.utils.exceptions import ProjectNameAlreadyExists, NoPocrFileFound
 
 
 class Project(yaml.YAMLObject):
     yaml_tag = u'!Project'
 
-    def __init__(self, project_path=None, project_name=None, conda_name=None, repo_name=None, vcs=None, python_version=None):
+    def __init__(self, project_path, project_name, conda_name, repo_name, repo_user, vcs, python_version):
         self.project_path = os.path.join(project_path, project_name)
         self.project_name = project_name
         self.conda_name = conda_name
         self.repo_name = repo_name
+        self.repo_user = repo_user
         self.vcs = vcs
         self.python_version = python_version
 
@@ -71,6 +72,16 @@ class Project(yaml.YAMLObject):
             raise ProjectNameAlreadyExists()
         return yaml_dict
 
+    @staticmethod
+    def project_from_file():
+        # search for the .pocr file
+        if os.path.exists(".pocr"):
+            with open(".pocr", 'r') as f:
+                project = yaml.load(f, Loader=yaml.Loader)
+        else:
+            raise NoPocrFileFound()
+        return project
+
     # GETTERS / SETTERS
 
     @property
@@ -120,3 +131,11 @@ class Project(yaml.YAMLObject):
     @repo_name.setter
     def repo_name(self, value):
         self._repo_name = value
+
+    @property
+    def repo_user(self):
+        return self._repo_user
+
+    @repo_user.setter
+    def repo_user(self, value):
+        self._repo_user = value

@@ -1,5 +1,4 @@
 import copy
-
 import yaml
 import keyring
 import pkg_resources

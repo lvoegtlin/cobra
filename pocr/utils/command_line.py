@@ -13,9 +13,9 @@ def get_params():
 
     # create subcommand
     create_parser = subparsers.add_parser("create", help="Create a new pocr project")
-    create_parser.add_argument('-n', '--project-name',
+    create_parser.add_argument('-n', '--name',
                                help="Name of the project",
-                               required=True,
+                               required=False,
                                type=str)
     create_parser.add_argument('-p', '--python-version',
                                help="Python version for the project. Default: 3.5",
@@ -23,7 +23,8 @@ def get_params():
                                type=float,
                                default=3.5)
     create_parser.add_argument('-r', '--repo-name',
-                               help="If you already have a github repo for the project. Enter the repo name.",
+                               help="If you already have a github repo for the project."
+                                    " Enter it in the following format: (username/reponame)",
                                required=False,
                                type=str)
     create_parser.add_argument('-c', '--conda-name',
@@ -33,8 +34,9 @@ def get_params():
     create_parser.add_argument('-gh', '--git-hook',
                                help="Does not install a post-commit git hook.",
                                action="store_false")
-    create_parser.add_argument('-e', '--existing',
-                               help="Searches in the current directory for a .pocr file and creates a project based on this",
+    create_parser.add_argument('-f', '--from-file',
+                               help="Searches in the current directory for a .pocr file"
+                                    " and creates a project based on this",
                                action="store_true")
     # list subcommand
     list_parser = subparsers.add_parser("list", help="Lists all existing pocr projects")

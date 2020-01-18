@@ -1,16 +1,15 @@
+import json
 import os
 import shutil
 import subprocess
-import json
 import sys
+import git
 
 from PyInquirer import prompt
 from github import Github, GithubException, UnknownObjectException
-
 from pocr.conf.config import Config
 from pocr.project import Project
 from pocr.utils.constants import Texts, Structures, Paths
-from pocr.utils.exceptions import CondaAlreadyExists, ProjectNameAlreadyExists, RepoAlreadyExists, FolderAlreadyExists
 
 
 def get_object_from_list_by_name(filter_str, input_list):
@@ -47,8 +46,8 @@ def check_env_exists(name):
     # just get the basename of the conda env path
     envs = [os.path.basename(e) for e in envs]
     if name in envs:
-        raise CondaAlreadyExists()
-
+        return True
+    return False
 
 def dialog_username_password():
     # username and password
@@ -108,46 +107,24 @@ def user_password_dialog(error=None):
         return error_msg
 
 
-def duplication_check(project_name, github_user, git_check=True, conda_check=True, folder_check=True):
-    # Check if project name already exists
-    try:
-        # project check
-        Project.project_exists(project_name)
-        if folder_check:
-            check_folder_exists(project_name)
-        if git_check:
-            # github check
-            check_repo_exists(project_name, github_user)
-        if conda_check:
-            # conda check
-            check_env_exists(project_name)
-    except ProjectNameAlreadyExists:
-        print("Project name is already in use")
-        sys.exit(1)
-    except RepoAlreadyExists:
-        print(
-            "The Github user {} already has a repository named {}".format(Config.getInstance().username, project_name))
-        sys.exit(1)
-    except CondaAlreadyExists:
-        print("There exists already a conda environment named {}".format(project_name))
-        sys.exit(1)
-    except FolderAlreadyExists:
-        print("There exists already a folder named {} in this directory".format(project_name))
-        sys.exit(1)
+def duplication_check(project: Project):
+    # [folder, repo, conda]
+    return [check_repo_exists('/'.join([ project.repo_user, project.project_name])),
+            check_folder_exists(project.project_name),
+            check_env_exists(project.project_name)]
 
 
 def check_folder_exists(project_name):
     cwd = os.getcwd()
-    if os.path.isdir(os.path.join(cwd, project_name)):
-        raise FolderAlreadyExists
+    return os.path.isdir(os.path.join(cwd, project_name)) or os.path.basename(cwd) == project_name
 
 
-def check_repo_exists(name, github_user):
+def check_repo_exists(full_repo_name):
     try:
-        github_user.get_repo(name)
+        Github().get_repo(full_repo_name)
     except UnknownObjectException:
-        return
-    raise RepoAlreadyExists
+        return False
+    return True
 
 
 def create_files_folders():
@@ -198,3 +175,28 @@ def delete_path(path: str):
     except PermissionError:
         print("Permission error for deleting the folder."
               " Please delete it by hand or try again.")
+
+
+def create_folder(project):
+    # pull repo
+    print("Pulling the repo...")
+    cwd = os.getcwd()
+    git_url = "{}{}/{}.git".format(Config.getInstance().connection_type.url, Config.getInstance().username,
+                                   project.repo_name)
+    git.Git(cwd).clone(git_url)
+    print("Pulling done")
+
+
+def create_repo(project):
+    print("Creating a repo...")
+    user = get_github_user()
+    user.create_repo(project.repo_name, auto_init=True)
+    print("Repo creation successful")
+
+
+def create_environment(project):
+    # create conda
+    print("Creating conda environment...")
+    arguments = ["--name", project.conda_name, "python={}".format(project.python_version)]
+    # can not use conda api because it does not work
+    os.system("conda create -y {}".format(' '.join(arguments)))
