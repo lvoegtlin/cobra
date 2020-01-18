@@ -6,7 +6,7 @@ with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='pocr',
-      version='0.1.6',
+      version='0.1.7',
       description='A tool to create and maintain your python projects',
       long_description=long_description,
       long_description_content_type='text/markdown',
