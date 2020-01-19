@@ -17,7 +17,7 @@ then
 fi
 
 # export this env
-conda env export -n env_name -f ${ENVIRONMENT_FILE}
+conda env export -n ${env_name} -f ${ENVIRONMENT_FILE}
 
 git diff --exit-code --quiet ${ENVIRONMENT_FILE}
 
