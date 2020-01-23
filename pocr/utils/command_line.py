@@ -13,10 +13,15 @@ def get_params():
 
     # create subcommand
     create_parser = subparsers.add_parser("create", help="Create a new pocr project")
-    create_parser.add_argument('-n', '--name',
-                               help="Name of the project",
-                               required=False,
-                               type=str)
+    create_group = create_parser.add_mutually_exclusive_group(required=True)
+    create_group.add_argument('-n', '--name',
+                              help="Name of the project",
+                              type=str)
+    create_group.add_argument('-f', '--from-file',
+                              help="Searches in the current directory for a .pocr file"
+                                   " and creates a project based on this",
+                              action="store_true")
+
     create_parser.add_argument('-p', '--python-version',
                                help="Python version for the project. Default: 3.5",
                                required=False,
@@ -34,10 +39,6 @@ def get_params():
     create_parser.add_argument('-gh', '--git-hook',
                                help="Does not install a post-commit git hook.",
                                action="store_false")
-    create_parser.add_argument('-f', '--from-file',
-                               help="Searches in the current directory for a .pocr file"
-                                    " and creates a project based on this",
-                               action="store_true")
     # list subcommand
     list_parser = subparsers.add_parser("list", help="Lists all existing pocr projects")
 
