@@ -1,6 +1,6 @@
 # Cobra
 
-[![PyPI version](https://badge.fury.io/py/pocr.svg)](https://badge.fury.io/py/pocr)
+[![PyPI version](https://badge.fury.io/py/cobra-projects.svg)](https://badge.fury.io/py/cobra-projects)
 
 Cobra is a project creation and management tool for python and git.
 It creates a conda environment and a github repository based on your requirements.
