@@ -3,13 +3,12 @@ import os
 import shutil
 import subprocess
 import sys
-import traceback
 
 from PyInquirer import prompt
 from github import Github, GithubException, UnknownObjectException
-from pocr.conf.config import Config
-from pocr.project import Project
-from pocr.utils.constants import Texts, Structures, Paths
+from cobra.conf.config import Config
+from cobra.project import Project
+from cobra.utils.constants import Texts, Structures, Paths
 
 
 def get_object_from_list_by_name(filter_str, input_list):
@@ -68,13 +67,13 @@ def user_password_dialog(error=None):
         if not error:
             github, username, password = dialog_username_password()
             auth = github.get_user().create_authorization(scopes=Structures.AUTH_SCOPES,
-                                                          note='pocr')
+                                                          note='cobra')
         else:
             if error['key'] == 0:
                 print(error['message'])
                 github, username, password = dialog_username_password()
                 auth = github.get_user().create_authorization(scopes=Structures.AUTH_SCOPES,
-                                                              note='pocr')
+                                                              note='cobra')
 
             if error['key'] == 1:
                 print(error['message'])
@@ -82,7 +81,7 @@ def user_password_dialog(error=None):
                 tfa = ask_questions(['input'], [Texts.TFA_TEXT], ['tfa'], [[]])['tfa']
                 auth = github.get_user().create_authorization(scopes=Structures.AUTH_SCOPES,
                                                               onetime_password=tfa,
-                                                              note='pocr')
+                                                              note='cobra')
 
         sec = auth.token or ""
         github = Github(sec)
@@ -135,7 +134,7 @@ def check_repo_exists(full_repo_name):
 
 def create_files_folders():
     # create folder
-    os.mkdir(Paths.POCR_FOLDER)
+    os.mkdir(Paths.COBRA_FOLDER)
 
     # create conf file
     open(Paths.CONF_FILE_PATH, 'a').close()
@@ -160,7 +159,7 @@ def first_usage():
     :return:
         boolean: if its first usage or not
     """
-    return not os.path.exists(Paths.POCR_FOLDER)
+    return not os.path.exists(Paths.COBRA_FOLDER)
 
 
 def get_github_user():

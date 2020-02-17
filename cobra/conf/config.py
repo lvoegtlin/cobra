@@ -3,8 +3,8 @@ import yaml
 import keyring
 import pkg_resources
 
-from pocr.utils.constants import Paths
-from pocr.vcs import VCS
+from cobra.utils.constants import Paths
+from cobra.vcs import VCS
 
 
 class Config(yaml.YAMLObject):
@@ -18,7 +18,7 @@ class Config(yaml.YAMLObject):
         self.vcses = []
         self.used_vcs = _used_vcs
         self.connection_type = _connection_type
-        self.user_password_domain = "pocr_user_sec"
+        self.user_password_domain = "cobra_user_sec"
         self.username = _username
         self.sec = ''
 

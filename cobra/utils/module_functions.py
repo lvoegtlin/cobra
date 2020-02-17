@@ -2,8 +2,8 @@ import os
 
 import git
 
-from pocr.conf.config import Config
-from pocr.utils.utils import get_github_user
+from cobra.conf.config import Config
+from cobra.utils.utils import get_github_user
 
 
 class ModuleFunctions:

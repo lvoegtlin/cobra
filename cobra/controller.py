@@ -6,15 +6,15 @@ import sys
 
 import pkg_resources
 from github import UnknownObjectException
-from pocr.utils.module_functions import ModuleFunctions
+from cobra.utils.module_functions import ModuleFunctions
 from tabulate import tabulate
 
-from pocr.conf.config import Config
-from pocr.project import Project
-from pocr.utils.command_line import get_params
-from pocr.utils.constants import Texts, Paths
-from pocr.utils.exceptions import ProjectNameAlreadyExists
-from pocr.utils.utils import get_object_from_list_by_name, ask_questions, user_password_dialog, \
+from cobra.conf.config import Config
+from cobra.project import Project
+from cobra.utils.command_line import get_params
+from cobra.utils.constants import Texts, Paths
+from cobra.utils.exceptions import ProjectNameAlreadyExists
+from cobra.utils.utils import get_object_from_list_by_name, ask_questions, user_password_dialog, \
     duplication_check, check_requirements, first_usage, get_github_user, check_env_exists, \
     delete_path, create_files_folders
 
@@ -29,14 +29,14 @@ def main():
     if args.install:
         if first_usage():
             installation()
-            print('pocr successfully installed!')
+            print('cobra successfully installed!')
             sys.exit(1)
         else:
-            print("pocr is already installed!")
+            print("cobra is already installed!")
             sys.exit(1)
 
     if first_usage():
-        print('pocr not installed! us the command "pocr --install" first')
+        print('cobra not installed! us the command "cobra --install" first')
         sys.exit(1)
 
     if args.command == 'create':
@@ -49,7 +49,7 @@ def main():
         remove(**args.__dict__)
 
     if args.clear:
-        subprocess.run("./pocr/clean.sh", shell=True)
+        subprocess.run("./cobra/clean.sh", shell=True)
 
 
 def installation():
@@ -86,7 +86,7 @@ def create(name, python_version, from_file, **kwargs):
     if from_file:
         print("Creating project from file")
         project = Project.project_from_file()
-        print(".pocr file found. Continue processing...")
+        print(".cobra file found. Continue processing...")
         name = project.project_name
     else:
         project = Project(os.getcwd(),
@@ -103,7 +103,7 @@ def create(name, python_version, from_file, **kwargs):
     # creat missing elements
     create_project_parts(project, **kwargs)
 
-    # save file in pocr folder
+    # save file in cobra folder
     Project.create_project_file(project)
 
     # save path, conda name, name, git link, python version into project file
@@ -135,7 +135,7 @@ def listing(**kwargs):
         projects = [list(vars(p).values()) for p in projects.values()]
         print(tabulate(projects, headers=headers))
     else:
-        print("There are no pocr projects! Use the 'create' command to create some projects.")
+        print("There are no cobra projects! Use the 'create' command to create some projects.")
 
 
 def remove(name, folder, repo, conda, remove_all, **kwargs):
@@ -147,7 +147,7 @@ def remove(name, folder, repo, conda, remove_all, **kwargs):
             sys.exit(1)
     except ProjectNameAlreadyExists:
         project = Project.remove_project(name)
-        print("Successfully removed pocr project {} from the project file".format(name))
+        print("Successfully removed cobra project {} from the project file".format(name))
 
     # load config
     Config.getInstance().load_config()
@@ -169,14 +169,14 @@ def remove(name, folder, repo, conda, remove_all, **kwargs):
             if e.status == 404:
                 print("Repo could not be deleted! Not existing")
             if e.status == 403:
-                print('Permission problem, please reinstall pocr (--clean; --install)')
+                print('Permission problem, please reinstall cobra (--clean; --install)')
 
     if folder:
         delete_path(project.project_path)
         print("Successfully removed folders")
     else:
-        delete_path(os.path.join(project.project_path, ".pocr"))
-        print("Removed .pocr file")
+        delete_path(os.path.join(project.project_path, ".cobra"))
+        print("Removed .cobra file")
 
     if conda:
         if check_env_exists(project.conda_name):

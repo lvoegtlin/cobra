@@ -5,18 +5,18 @@ this_directory = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
-setup(name='pocr',
+setup(name='cobra',
       version='0.1.7alpha1',
       description='A tool to create and maintain your python projects',
       long_description=long_description,
       long_description_content_type='text/markdown',
-      url='https://github.com/lvoegtlin/pocr',
+      url='https://github.com/lvoegtlin/cobra',
       author='Lars Voegtlin',
       author_email='lars.voegtlin@unifr.ch',
       license='MIT',
-      packages=find_packages(exclude=['build', 'conda_builds', 'dist']),
+      packages=find_packages(exclude=['build', 'dist']),
       entry_points={
-          'console_scripts': ['pocr=pocr.controller:entry_point'],
+          'console_scripts': ['cobra=cobra.controller:entry_point'],
       },
       include_package_data=True,
       package_data={'': ['*.yml', 'post-commit']},

@@ -1,4 +1,4 @@
-from pocr.connenction_types import ConnectionType
+from cobra.connenction_types import ConnectionType
 import yaml
 
 

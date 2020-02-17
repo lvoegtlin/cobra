@@ -3,7 +3,7 @@ class ProjectNameAlreadyExists(Exception):
     pass
 
 
-class NoPocrFileFound(Exception):
+class NoCobraFileFound(Exception):
     pass
 
 

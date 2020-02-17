@@ -1,11 +1,11 @@
 #!/bin/sh
 
-POCR_FILE=.pocr
+COBRA_FILE=.cobra
 ENVIRONMENT_FILE=environment.yml
 FIRST_RUN=false
 
 # get the second line of the pocr file
-line=$(awk 'NR == 2' ${POCR_FILE})
+line=$(awk 'NR == 2' ${COBRA_FILE})
 
 # parse out the conda env name
 env_name=$(echo ${line} | sed 's/^_conda_name: \(.*\)$/\1/')

@@ -1,8 +1,8 @@
 import os
 import yaml
 
-from pocr.utils.constants import Paths
-from pocr.utils.exceptions import ProjectNameAlreadyExists, NoPocrFileFound
+from cobra.utils.constants import Paths
+from cobra.utils.exceptions import ProjectNameAlreadyExists, NoCobraFileFound
 
 
 class Project(yaml.YAMLObject):
@@ -37,7 +37,7 @@ class Project(yaml.YAMLObject):
 
     @staticmethod
     def create_project_file(project):
-        with open(os.path.join(project.project_path, ".pocr"), 'w') as f:
+        with open(os.path.join(project.project_path, ".cobra"), 'w') as f:
             yaml.dump(project, f)
 
     @staticmethod
@@ -74,9 +74,9 @@ class Project(yaml.YAMLObject):
 
     @staticmethod
     def project_from_file():
-        # search for the .pocr file
-        if os.path.exists(".pocr"):
-            with open(".pocr", 'r') as f:
+        # search for the .cobra file
+        if os.path.exists(".cobra"):
+            with open(".cobra", 'r') as f:
                 project = yaml.load(f, Loader=yaml.Loader)
         else:
             raise NoPocrFileFound()

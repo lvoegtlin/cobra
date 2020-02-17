@@ -2,9 +2,9 @@ import os
 
 
 class Paths:
-    POCR_FOLDER = os.path.expanduser("~/.pocr")
-    CONF_FILE_PATH = os.path.join(POCR_FOLDER, "config")
-    PROJECT_FILE_PATH = os.path.join(POCR_FOLDER, "projects")
+    COBRA_FOLDER = os.path.expanduser("~/.pocr")
+    CONF_FILE_PATH = os.path.join(COBRA_FOLDER, "config")
+    PROJECT_FILE_PATH = os.path.join(COBRA_FOLDER, "projects")
     PACKAGE_VCS_PATH = '/vcs.yml'
     PACKAGE_GIT_HOOK_PATH = '/'.join(('utils', 'post-commit'))
 
@@ -15,7 +15,7 @@ class Structures:
 
 
 class Texts:
-    VCS_SELECT_TEXT = "Chose the vcs hoster you want to use (for all projects)"
+    VCS_SELECT_TEXT = "Chose the vcs host you want to use (for all projects)"
     CON_SELECT_TEXT = "Select the connection type:"
     USERNAME_TEXT = "Enter your username (of the VCS host)"
     PASSWORD_TEXT = "Enter your password (of the VCS host)"

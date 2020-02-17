@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd
-rm -rf .pocr
+rm -rf .cobra
