@@ -3,13 +3,13 @@ import os
 import shutil
 import subprocess
 import sys
-import git
 
 from PyInquirer import prompt
 from github import Github, GithubException, UnknownObjectException
 from pocr.conf.config import Config
 from pocr.project import Project
 from pocr.utils.constants import Texts, Structures, Paths
+from pocr.utils.module_functions import ModuleFunctions
 
 
 def get_object_from_list_by_name(filter_str, input_list):
@@ -109,12 +109,14 @@ def user_password_dialog(error=None):
 
 def duplication_check(project: Project):
     # [folder, repo, conda]
-    return [check_repo_exists('/'.join([ project.repo_user, project.project_name])),
+    return [check_repo_exists('/'.join([project.repo_user, project.project_name])),
             check_folder_exists(project.project_name),
             check_env_exists(project.project_name)]
 
 
 def check_folder_exists(project_name):
+    # TODO check if this or the parent directory contains a .git folder and in this folder the origin file
+    #  which points to the repo
     cwd = os.getcwd()
     return os.path.isdir(os.path.join(cwd, project_name)) or os.path.basename(cwd) == project_name
 
@@ -124,6 +126,8 @@ def check_repo_exists(full_repo_name):
         Github().get_repo(full_repo_name)
     except UnknownObjectException:
         return False
+    except GithubException:
+        return True
     return True
 
 
@@ -177,26 +181,5 @@ def delete_path(path: str):
               " Please delete it by hand or try again.")
 
 
-def create_folder(project):
-    # pull repo
-    print("Pulling the repo...")
-    cwd = os.getcwd()
-    git_url = "{}{}/{}.git".format(Config.getInstance().connection_type.url, Config.getInstance().username,
-                                   project.repo_name)
-    git.Git(cwd).clone(git_url)
-    print("Pulling done")
-
-
-def create_repo(project):
-    print("Creating a repo...")
-    user = get_github_user()
-    user.create_repo(project.repo_name, auto_init=True)
-    print("Repo creation successful")
-
-
-def create_environment(project):
-    # create conda
-    print("Creating conda environment...")
-    arguments = ["--name", project.conda_name, "python={}".format(project.python_version)]
-    # can not use conda api because it does not work
-    os.system("conda create -y {}".format(' '.join(arguments)))
+def get_module_functions():
+    return [f for f in dir(ModuleFunctions) if callable(getattr(ModuleFunctions, f)) and not f.startswith('__')]

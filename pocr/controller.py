@@ -14,7 +14,8 @@ from pocr.utils.constants import Texts, Paths, Structures
 from pocr.utils.exceptions import ProjectNameAlreadyExists
 from pocr.utils.utils import get_object_from_list_by_name, ask_questions, user_password_dialog, \
     duplication_check, create_files_folders, check_requirements, first_usage, get_github_user, check_env_exists, \
-    delete_path, create_repo, create_folder, create_environment
+    delete_path, get_module_functions
+from pocr.utils.module_functions import create_folder, create_repo, create_environment
 
 
 def main():
@@ -111,7 +112,7 @@ def create(name, python_version, from_file, **kwargs):
 def create_project_parts(project, git_hook, **kwargs):
     # check for modules existing
     check_mask = duplication_check(project)
-    MODULE_FUNCTIONS = [create_repo, create_folder, create_environment]
+    MODULE_FUNCTIONS = get_module_functions()
 
     for i, mask in enumerate(check_mask):
         if not mask:

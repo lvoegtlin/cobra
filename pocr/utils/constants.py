@@ -2,7 +2,6 @@ import os
 
 
 class Paths:
-
     POCR_FOLDER = os.path.expanduser("~/.pocr")
     CONF_FILE_PATH = os.path.join(POCR_FOLDER, "config")
     PROJECT_FILE_PATH = os.path.join(POCR_FOLDER, "projects")
@@ -23,4 +22,4 @@ class Texts:
     AUTH_TEXT = "What kind of Authentication do you want to use: (if 2FA chose token)"
     TOKEN_TEXT = "Enter the token"
     TFA_TEXT = "Enter the 2FA token"
-    TOKEN_ALREADY_EXISTS_TEXT = "Token already exists. Please delete the token on github (https://github.com/settings/tokens)"
+    TOKEN_ALREADY_EXISTS_TEXT = "Token already exists. Please delete the token (https://github.com/settings/tokens)"
