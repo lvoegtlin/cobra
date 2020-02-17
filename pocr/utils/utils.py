@@ -108,10 +108,10 @@ def user_password_dialog(error=None):
 
 
 def duplication_check(project: Project):
-    # [folder, repo, conda]
-    return [check_repo_exists('/'.join([project.repo_user, project.project_name])),
-            check_folder_exists(project.project_name),
-            check_env_exists(project.project_name)]
+    # [repo, folder, conda]
+    return [check_repo_exists('/'.join([project.repo_user, project.repo_name])),
+            check_folder_exists(project.repo_name),
+            check_env_exists(project.conda_name)]
 
 
 def check_folder_exists(project_name):

@@ -90,8 +90,8 @@ def create(name, python_version, from_file, **kwargs):
     else:
         project = Project(os.getcwd(),
                           name,
-                          name,
-                          name,
+                          "repo_name" in kwargs if kwargs['repo_name'] else name,
+                          "conda_name" in kwargs if kwargs['conda_name'] else name,
                           Config.getInstance().username,
                           Config.getInstance().used_vcs,
                           python_version)
@@ -119,10 +119,10 @@ def create_project_parts(project, git_hook, **kwargs):
             MODULE_FUNCTIONS[i](project)
 
     if git_hook:
-        if os.path.basename(os.getcwd()) == project.project_name:
+        if os.path.basename(os.getcwd()) == project.repo_name:
             copy_to = os.path.join(os.getcwd(), '.git', 'hooks', 'post-commit')
         else:
-            copy_to = os.path.join(os.getcwd(), project.project_name, '.git', 'hooks', 'post-commit')
+            copy_to = os.path.join(os.getcwd(), project.repo_name, '.git', 'hooks', 'post-commit')
 
         shutil.copy(pkg_resources.resource_filename(__name__, Paths.PACKAGE_GIT_HOOK_PATH), copy_to)
 
