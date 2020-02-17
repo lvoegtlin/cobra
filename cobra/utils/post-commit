@@ -1,0 +1,32 @@
+#!/bin/sh
+
+COBRA_FILE=.cobra
+ENVIRONMENT_FILE=environment.yml
+FIRST_RUN=false
+
+# get the second line of the pocr file
+line=$(awk 'NR == 2' ${COBRA_FILE})
+
+# parse out the conda env name
+env_name=$(echo ${line} | sed 's/^_conda_name: \(.*\)$/\1/')
+
+# check if running for the first time
+if [[ ! -f ${ENVIRONMENT_FILE} ]];
+then
+    FIRST_RUN=true
+fi
+
+# export this env
+conda env export -n ${env_name} -f ${ENVIRONMENT_FILE}
+
+git diff --exit-code --quiet ${ENVIRONMENT_FILE}
+
+# If new environment file is different, commit it
+if [[ $? -eq 0 ]] && [[ ! ${FIRST_RUN} ]]; then
+    echo "Conda environment not changed. No additional commit."
+else
+    echo "Conda environment changed. Commiting new environment.yml"
+    git add environment.yml
+    git commit -m "Updating conda environment"
+    exit 1
+fi

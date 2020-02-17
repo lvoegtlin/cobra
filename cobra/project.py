@@ -1,18 +1,19 @@
 import os
 import yaml
 
-from pocr.utils.constants import Paths
-from pocr.utils.exceptions import ProjectNameAlreadyExists
+from cobra.utils.constants import Paths
+from cobra.utils.exceptions import ProjectNameAlreadyExists, NoCobraFileFound
 
 
 class Project(yaml.YAMLObject):
     yaml_tag = u'!Project'
 
-    def __init__(self, project_path=None, project_name=None, conda_name=None, repo_name=None, vcs=None, python_version=None):
+    def __init__(self, project_path, project_name, conda_name, repo_name, repo_user, vcs, python_version):
         self.project_path = os.path.join(project_path, project_name)
         self.project_name = project_name
         self.conda_name = conda_name
         self.repo_name = repo_name
+        self.repo_user = repo_user
         self.vcs = vcs
         self.python_version = python_version
 
@@ -33,6 +34,11 @@ class Project(yaml.YAMLObject):
         yaml_dict.update(projects)
         with open(Paths.PROJECT_FILE_PATH, 'w') as f:
             yaml.dump(yaml_dict, f)
+
+    @staticmethod
+    def create_project_file(project):
+        with open(os.path.join(project.project_path, ".cobra"), 'w') as f:
+            yaml.dump(project, f)
 
     @staticmethod
     def append_project(project):
@@ -65,6 +71,16 @@ class Project(yaml.YAMLObject):
         if project_name in yaml_dict:
             raise ProjectNameAlreadyExists()
         return yaml_dict
+
+    @staticmethod
+    def project_from_file():
+        # search for the .cobra file
+        if os.path.exists(".cobra"):
+            with open(".cobra", 'r') as f:
+                project = yaml.load(f, Loader=yaml.Loader)
+        else:
+            raise NoPocrFileFound()
+        return project
 
     # GETTERS / SETTERS
 
@@ -115,3 +131,11 @@ class Project(yaml.YAMLObject):
     @repo_name.setter
     def repo_name(self, value):
         self._repo_name = value
+
+    @property
+    def repo_user(self):
+        return self._repo_user
+
+    @repo_user.setter
+    def repo_user(self, value):
+        self._repo_user = value

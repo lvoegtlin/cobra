@@ -1,16 +1,14 @@
+import json
 import os
 import shutil
 import subprocess
-import json
 import sys
 
 from PyInquirer import prompt
 from github import Github, GithubException, UnknownObjectException
-
-from pocr.conf.config import Config
-from pocr.project import Project
-from pocr.utils.constants import Texts, Structures, Paths
-from pocr.utils.exceptions import CondaAlreadyExists, ProjectNameAlreadyExists, RepoAlreadyExists
+from cobra.conf.config import Config
+from cobra.project import Project
+from cobra.utils.constants import Texts, Structures, Paths
 
 
 def get_object_from_list_by_name(filter_str, input_list):
@@ -47,8 +45,8 @@ def check_env_exists(name):
     # just get the basename of the conda env path
     envs = [os.path.basename(e) for e in envs]
     if name in envs:
-        raise CondaAlreadyExists()
-
+        return True
+    return False
 
 def dialog_username_password():
     # username and password
@@ -69,13 +67,13 @@ def user_password_dialog(error=None):
         if not error:
             github, username, password = dialog_username_password()
             auth = github.get_user().create_authorization(scopes=Structures.AUTH_SCOPES,
-                                                          note='pocr')
+                                                          note='cobra')
         else:
             if error['key'] == 0:
                 print(error['message'])
                 github, username, password = dialog_username_password()
                 auth = github.get_user().create_authorization(scopes=Structures.AUTH_SCOPES,
-                                                              note='pocr')
+                                                              note='cobra')
 
             if error['key'] == 1:
                 print(error['message'])
@@ -83,7 +81,7 @@ def user_password_dialog(error=None):
                 tfa = ask_questions(['input'], [Texts.TFA_TEXT], ['tfa'], [[]])['tfa']
                 auth = github.get_user().create_authorization(scopes=Structures.AUTH_SCOPES,
                                                               onetime_password=tfa,
-                                                              note='pocr')
+                                                              note='cobra')
 
         sec = auth.token or ""
         github = Github(sec)
@@ -108,47 +106,41 @@ def user_password_dialog(error=None):
         return error_msg
 
 
-def duplication_check(project_name, github_user, git_check=True, conda_check=True):
-    # Check if project name already exists
-    try:
-        # project check
-        Project.project_exists(project_name)
-        if git_check:
-            # github check
-            check_repo_exists(project_name, github_user)
-        if conda_check:
-            # conda check
-            check_env_exists(project_name)
-    except ProjectNameAlreadyExists:
-        print("Project name is already in use")
-        sys.exit(1)
-    except RepoAlreadyExists:
-        print(
-            "The Github user {} already has a repository named {}".format(Config.getInstance().username, project_name))
-        sys.exit(1)
-    except CondaAlreadyExists:
-        print("There exists already a conda environment named {}".format(project_name))
-        sys.exit(1)
+def duplication_check(project: Project):
+    # [repo, folder, conda]
+    res = []
+    None if check_repo_exists('/'.join([project.repo_user, project.repo_name])) else res.append('create_repo')
+    None if check_folder_exists(project.repo_name) else res.append('create_folder')
+    None if check_env_exists(project.conda_name) else res.append('create_environment')
+    return res
 
 
-def check_repo_exists(name, github_user):
+def check_folder_exists(project_name):
+    # TODO check if this or the parent directory contains a .git folder and in this folder the origin file
+    #  which points to the repo
+    cwd = os.getcwd()
+    return os.path.isdir(os.path.join(cwd, project_name)) or os.path.basename(cwd) == project_name
+
+
+def check_repo_exists(full_repo_name):
     try:
-        github_user.get_repo(name)
+        Github().get_repo(full_repo_name)
     except UnknownObjectException:
-        return
-    raise RepoAlreadyExists
+        return False
+    except GithubException:
+        return False
+    return True
 
 
 def create_files_folders():
     # create folder
-    os.mkdir(Paths.POCR_FOLDER)
+    os.mkdir(Paths.COBRA_FOLDER)
 
     # create conf file
     open(Paths.CONF_FILE_PATH, 'a').close()
     # Config.getInstance().write_into_yaml_file(Constants.CONF_FILE_PATH, **Constants.CONF_DICT)
     # project file {'TestProject': {infos}}
     open(Paths.PROJECT_FILE_PATH, 'a').close()
-
 
 def check_requirements():
     if shutil.which("conda") is None:
@@ -167,7 +159,7 @@ def first_usage():
     :return:
         boolean: if its first usage or not
     """
-    return not os.path.exists(Paths.POCR_FOLDER)
+    return not os.path.exists(Paths.COBRA_FOLDER)
 
 
 def get_github_user():
@@ -175,3 +167,21 @@ def get_github_user():
     github = Github(Config.getInstance().sec)
     user = github.get_user()
     return user
+
+
+def delete_path(path: str):
+    # check if path is pointing to a file or folder
+    if os.path.exists(path):
+        try:
+            if os.path.isfile(path):
+                os.remove(path)
+            else:
+                shutil.rmtree(path)
+        except PermissionError:
+            print("Permission error for deleting the folder."
+                  " Please delete it by hand or try again.")
+
+
+if __name__ == '__main__':
+    project = Project.project_from_file()
+    duplication_check(project)
