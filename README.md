@@ -21,7 +21,7 @@ You have three different options to install cobra. Just always keep in mind that
 ### pip
 If your pip path is pointing to the pip3 you can also you just pip.
 ```
-pip3 install cobra
+pip3 install cobra-project
 ```
 
 Then execute the command

@@ -5,7 +5,7 @@ this_directory = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
-setup(name='cobra',
+setup(name='cobra-projects',
       version='0.1.8alpha0',
       description='A tool to create and maintain your python projects',
       long_description=long_description,
