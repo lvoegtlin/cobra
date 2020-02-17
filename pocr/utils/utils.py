@@ -3,13 +3,13 @@ import os
 import shutil
 import subprocess
 import sys
+import traceback
 
 from PyInquirer import prompt
 from github import Github, GithubException, UnknownObjectException
 from pocr.conf.config import Config
 from pocr.project import Project
 from pocr.utils.constants import Texts, Structures, Paths
-from pocr.utils.module_functions import ModuleFunctions
 
 
 def get_object_from_list_by_name(filter_str, input_list):
@@ -109,9 +109,11 @@ def user_password_dialog(error=None):
 
 def duplication_check(project: Project):
     # [repo, folder, conda]
-    return [check_repo_exists('/'.join([project.repo_user, project.repo_name])),
-            check_folder_exists(project.repo_name),
-            check_env_exists(project.conda_name)]
+    res = []
+    None if check_repo_exists('/'.join([project.repo_user, project.repo_name])) else res.append('create_repo')
+    None if check_folder_exists(project.repo_name) else res.append('create_folder')
+    None if check_env_exists(project.conda_name) else res.append('create_environment')
+    return res
 
 
 def check_folder_exists(project_name):
@@ -127,7 +129,7 @@ def check_repo_exists(full_repo_name):
     except UnknownObjectException:
         return False
     except GithubException:
-        return True
+        return False
     return True
 
 
@@ -140,7 +142,6 @@ def create_files_folders():
     # Config.getInstance().write_into_yaml_file(Constants.CONF_FILE_PATH, **Constants.CONF_DICT)
     # project file {'TestProject': {infos}}
     open(Paths.PROJECT_FILE_PATH, 'a').close()
-
 
 def check_requirements():
     if shutil.which("conda") is None:
@@ -171,15 +172,17 @@ def get_github_user():
 
 def delete_path(path: str):
     # check if path is pointing to a file or folder
-    try:
-        if os.path.isfile(path):
-            os.remove(path)
-        else:
-            shutil.rmtree(path)
-    except PermissionError:
-        print("Permission error for deleting the folder."
-              " Please delete it by hand or try again.")
+    if os.path.exists(path):
+        try:
+            if os.path.isfile(path):
+                os.remove(path)
+            else:
+                shutil.rmtree(path)
+        except PermissionError:
+            print("Permission error for deleting the folder."
+                  " Please delete it by hand or try again.")
 
 
-def get_module_functions():
-    return [f for f in dir(ModuleFunctions) if callable(getattr(ModuleFunctions, f)) and not f.startswith('__')]
+if __name__ == '__main__':
+    project = Project.project_from_file()
+    duplication_check(project)

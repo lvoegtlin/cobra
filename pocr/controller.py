@@ -1,3 +1,4 @@
+import inspect
 import os
 import shutil
 import subprocess
@@ -5,17 +6,17 @@ import sys
 
 import pkg_resources
 from github import UnknownObjectException
+from pocr.utils.module_functions import ModuleFunctions
 from tabulate import tabulate
 
 from pocr.conf.config import Config
 from pocr.project import Project
 from pocr.utils.command_line import get_params
-from pocr.utils.constants import Texts, Paths, Structures
+from pocr.utils.constants import Texts, Paths
 from pocr.utils.exceptions import ProjectNameAlreadyExists
 from pocr.utils.utils import get_object_from_list_by_name, ask_questions, user_password_dialog, \
-    duplication_check, create_files_folders, check_requirements, first_usage, get_github_user, check_env_exists, \
-    delete_path, get_module_functions
-from pocr.utils.module_functions import create_folder, create_repo, create_environment
+    duplication_check, check_requirements, first_usage, get_github_user, check_env_exists, \
+    delete_path, create_files_folders
 
 
 def main():
@@ -112,11 +113,10 @@ def create(name, python_version, from_file, **kwargs):
 def create_project_parts(project, git_hook, **kwargs):
     # check for modules existing
     check_mask = duplication_check(project)
-    MODULE_FUNCTIONS = get_module_functions()
+    MODULE_FUNCTIONS = dict(inspect.getmembers(ModuleFunctions, predicate=inspect.isfunction))
 
-    for i, mask in enumerate(check_mask):
-        if not mask:
-            MODULE_FUNCTIONS[i](project)
+    for mask in check_mask:
+            MODULE_FUNCTIONS[mask](project)
 
     if git_hook:
         if os.path.basename(os.getcwd()) == project.repo_name:

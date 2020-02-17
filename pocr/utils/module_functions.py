@@ -33,6 +33,3 @@ class ModuleFunctions:
         # can not use conda api because it does not work
         os.system("conda create -y {}".format(' '.join(arguments)))
 
-
-if __name__ == '__main__':
-    print(123)
