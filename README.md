@@ -46,7 +46,7 @@ and follow the instructions.
 If you have to re-install or uninstall cobra:
 1. Delete the access token from your github page  (Settings -> Developer settings -> Personal access tokens -> delete (cobra)
 2. ```rm -rf ~/.cobra```
-3. ```pip3/pip uninstall cobra```
+3. ```pip3/pip uninstall cobra-projects```
 
 ## Usage
 ```

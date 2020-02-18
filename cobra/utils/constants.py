@@ -2,7 +2,7 @@ import os
 
 
 class Paths:
-    COBRA_FOLDER = os.path.expanduser("~/.pocr")
+    COBRA_FOLDER = os.path.expanduser("~/.cobra")
     CONF_FILE_PATH = os.path.join(COBRA_FOLDER, "config")
     PROJECT_FILE_PATH = os.path.join(COBRA_FOLDER, "projects")
     PACKAGE_VCS_PATH = '/vcs.yml'
