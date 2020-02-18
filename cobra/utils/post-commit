@@ -19,6 +19,9 @@ fi
 # export this env
 conda env export -n ${env_name} -f ${ENVIRONMENT_FILE}
 
+# get rid of the build numbers
+cat ${ENVIRONMENT_FILE} | sed 's/^\(.*=..*\)=[^=]*$/\1/' > ${ENVIRONMENT_FILE}
+
 git diff --exit-code --quiet ${ENVIRONMENT_FILE}
 
 # If new environment file is different, commit it
