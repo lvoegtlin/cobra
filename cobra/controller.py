@@ -104,10 +104,10 @@ def create(name, python_version, from_file, **kwargs):
     create_project_parts(project, **kwargs)
 
     # save file in cobra folder
-    Project.create_project_file(project)
+    project.create_project_file()
 
     # save path, conda name, name, git link, python version into project file
-    Project.append_project(project)
+    project.append_project()
 
 
 def create_project_parts(project, git_hook, **kwargs):
@@ -128,7 +128,7 @@ def create_project_parts(project, git_hook, **kwargs):
 
 
 def listing(**kwargs):
-    projects = Project.load_projects()
+    projects = Project.get_projects()
     if projects:
         headers = vars(next(iter(projects.values()))).keys()
         headers = [h[1:] for h in headers]

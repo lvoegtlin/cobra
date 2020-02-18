@@ -20,33 +20,17 @@ class Project(yaml.YAMLObject):
     def __repr__(self):
         return "{}\t{}\t{}\t{}".format(self._project_name, self._conda_name, self._vcs, self._python_version)
 
-    # STATIC
+    def create_project_file(self):
+        with open(os.path.join(self.project_path, ".cobra"), 'w') as f:
+            yaml.dump(self, f)
 
-    @staticmethod
-    def load_projects():
-        with open(Paths.PROJECT_FILE_PATH, 'r') as f:
-            return yaml.load(f, Loader=yaml.Loader) or None
-
-    @staticmethod
-    def save_projects(projects: list):
-        with open(Paths.PROJECT_FILE_PATH, 'r') as f:
-            yaml_dict = yaml.safe_load(f) or {}
-        yaml_dict.update(projects)
-        with open(Paths.PROJECT_FILE_PATH, 'w') as f:
-            yaml.dump(yaml_dict, f)
-
-    @staticmethod
-    def create_project_file(project):
-        with open(os.path.join(project.project_path, ".cobra"), 'w') as f:
-            yaml.dump(project, f)
-
-    @staticmethod
-    def append_project(project):
-        yaml_dict = Project.project_exists(project.project_name)
-        yaml_dict[project.project_name] = project
+    def append_project(self):
+        yaml_dict = Project.project_exists(self.project_name)
+        yaml_dict[self.project_name] = self
         with open(Paths.PROJECT_FILE_PATH, 'a') as f:
             yaml.dump(yaml_dict, f)
 
+    # STATIC
     @staticmethod
     def remove_project(project_name):
         with open(Paths.PROJECT_FILE_PATH, 'r') as f:
@@ -61,6 +45,19 @@ class Project(yaml.YAMLObject):
             open(Paths.PROJECT_FILE_PATH, 'w').close()
 
         return project
+
+    @staticmethod
+    def get_projects():
+        with open(Paths.PROJECT_FILE_PATH, 'r') as f:
+            return yaml.load(f, Loader=yaml.Loader) or None
+
+    @staticmethod
+    def save_projects(projects: list):
+        with open(Paths.PROJECT_FILE_PATH, 'r') as f:
+            yaml_dict = yaml.safe_load(f) or {}
+        yaml_dict.update(projects)
+        with open(Paths.PROJECT_FILE_PATH, 'w') as f:
+            yaml.dump(yaml_dict, f)
 
     @staticmethod
     def project_exists(project_name: str):
@@ -79,7 +76,7 @@ class Project(yaml.YAMLObject):
             with open(".cobra", 'r') as f:
                 project = yaml.load(f, Loader=yaml.Loader)
         else:
-            raise NoPocrFileFound()
+            raise NoCobraFileFound()
         return project
 
     # GETTERS / SETTERS
