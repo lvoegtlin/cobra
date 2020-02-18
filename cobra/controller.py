@@ -36,7 +36,8 @@ def main():
             sys.exit(1)
 
     if first_usage():
-        print('cobra not installed! us the command "cobra --install" first')
+        installation()
+        print('cobra successfully installed!')
         sys.exit(1)
 
     if args.command == 'create':
