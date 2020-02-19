@@ -1,22 +1,18 @@
-import inspect
 import os
-import shutil
 import subprocess
 import sys
 
-import pkg_resources
 from github import UnknownObjectException
-from cobra.utils.module_functions import ModuleFunctions
 from tabulate import tabulate
 
 from cobra.conf.config import Config
 from cobra.project import Project
 from cobra.utils.command_line import get_params
-from cobra.utils.constants import Texts, Paths
+from cobra.utils.constants import Texts
 from cobra.utils.exceptions import ProjectNameAlreadyExists
 from cobra.utils.utils import get_object_from_list_by_name, ask_questions, user_password_dialog, \
-    duplication_check, check_requirements, first_usage, get_github_user, check_env_exists, \
-    delete_path, create_files_folders
+    check_requirements, first_usage, get_github_user, check_env_exists, \
+    delete_path, create_files_folders, create_project_parts
 
 
 def main():
@@ -109,23 +105,6 @@ def create(name, python_version, from_file, **kwargs):
 
     # save path, conda name, name, git link, python version into project file
     project.append_project()
-
-
-def create_project_parts(project, git_hook, **kwargs):
-    # check for modules existing
-    check_mask = duplication_check(project)
-    MODULE_FUNCTIONS = dict(inspect.getmembers(ModuleFunctions, predicate=inspect.isfunction))
-
-    for mask in check_mask:
-            MODULE_FUNCTIONS[mask](project)
-
-    if git_hook:
-        if os.path.basename(os.getcwd()) == project.repo_name:
-            copy_to = os.path.join(os.getcwd(), '.git', 'hooks', 'post-commit')
-        else:
-            copy_to = os.path.join(os.getcwd(), project.repo_name, '.git', 'hooks', 'post-commit')
-
-        shutil.copy(pkg_resources.resource_filename(__name__, Paths.PACKAGE_GIT_HOOK_PATH), copy_to)
 
 
 def listing(**kwargs):
