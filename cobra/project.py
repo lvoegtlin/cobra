@@ -143,19 +143,19 @@ class Project(yaml.YAMLObject):
     def repo_user(self, value):
         self._repo_user = value
 
+    @staticmethod
+    def create_project_parts(project, git_hook):
+        # check for modules existing
+        check_mask = duplication_check(project)
+        MODULE_FUNCTIONS = dict(inspect.getmembers(ModuleFunctions, predicate=inspect.isfunction))
 
-def create_project_parts(project, git_hook):
-    # check for modules existing
-    check_mask = duplication_check(project)
-    MODULE_FUNCTIONS = dict(inspect.getmembers(ModuleFunctions, predicate=inspect.isfunction))
+        for mask in check_mask:
+                MODULE_FUNCTIONS[mask](project)
 
-    for mask in check_mask:
-            MODULE_FUNCTIONS[mask](project)
+        if git_hook:
+            if os.path.basename(os.getcwd()) == project.repo_name:
+                copy_to = os.path.join(os.getcwd(), '.git', 'hooks', 'post-commit')
+            else:
+                copy_to = os.path.join(os.getcwd(), project.repo_name, '.git', 'hooks', 'post-commit')
 
-    if git_hook:
-        if os.path.basename(os.getcwd()) == project.repo_name:
-            copy_to = os.path.join(os.getcwd(), '.git', 'hooks', 'post-commit')
-        else:
-            copy_to = os.path.join(os.getcwd(), project.repo_name, '.git', 'hooks', 'post-commit')
-
-        shutil.copy(pkg_resources.resource_filename(__name__, Paths.PACKAGE_GIT_HOOK_PATH), copy_to)
+            shutil.copy(pkg_resources.resource_filename(__name__, Paths.PACKAGE_GIT_HOOK_PATH), copy_to)

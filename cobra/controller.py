@@ -6,7 +6,7 @@ from github import UnknownObjectException
 from tabulate import tabulate
 
 from cobra.conf.config import Config
-from cobra.project import Project, create_project_parts
+from cobra.project import Project
 from cobra.utils.command_line import get_params
 from cobra.utils.constants import Texts
 from cobra.utils.exceptions import ProjectNameAlreadyExists
@@ -98,7 +98,7 @@ def create(name, python_version, from_file, **kwargs):
     Project.project_exists(name)
 
     # creat missing elements
-    create_project_parts(project, **kwargs)
+    Project.create_project_parts(project, **kwargs)
 
     # save file in cobra folder
     project.create_project_file()
