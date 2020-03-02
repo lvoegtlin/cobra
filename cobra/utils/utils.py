@@ -1,17 +1,13 @@
-import inspect
 import json
 import os
 import shutil
 import subprocess
 import sys
 
-import pkg_resources
 from PyInquirer import prompt
 from github import Github, GithubException, UnknownObjectException
 from cobra.conf.config import Config
-from cobra.project import Project
 from cobra.utils.constants import Texts, Structures, Paths
-from cobra.utils.module_functions import ModuleFunctions
 
 
 def get_object_from_list_by_name(filter_str, input_list):
@@ -50,6 +46,7 @@ def check_env_exists(name):
     if name in envs:
         return True
     return False
+
 
 def dialog_username_password():
     # username and password
@@ -109,7 +106,7 @@ def user_password_dialog(error=None):
         return error_msg
 
 
-def duplication_check(project: Project):
+def duplication_check(project):
     # [repo, folder, conda]
     res = []
     None if check_repo_exists('/'.join([project.repo_user, project.repo_name])) else res.append('create_repo')
@@ -144,6 +141,7 @@ def create_files_folders():
     # Config.getInstance().write_into_yaml_file(Constants.CONF_FILE_PATH, **Constants.CONF_DICT)
     # project file {'TestProject': {infos}}
     open(Paths.PROJECT_FILE_PATH, 'a').close()
+
 
 def check_requirements():
     if shutil.which("conda") is None:
@@ -184,19 +182,3 @@ def delete_path(path: str):
             print("Permission error for deleting the folder."
                   " Please delete it by hand or try again.")
 
-
-def create_project_parts(project, git_hook, **kwargs):
-    # check for modules existing
-    check_mask = duplication_check(project)
-    MODULE_FUNCTIONS = dict(inspect.getmembers(ModuleFunctions, predicate=inspect.isfunction))
-
-    for mask in check_mask:
-            MODULE_FUNCTIONS[mask](project)
-
-    if git_hook:
-        if os.path.basename(os.getcwd()) == project.repo_name:
-            copy_to = os.path.join(os.getcwd(), '.git', 'hooks', 'post-commit')
-        else:
-            copy_to = os.path.join(os.getcwd(), project.repo_name, '.git', 'hooks', 'post-commit')
-
-        shutil.copy(pkg_resources.resource_filename(__name__, Paths.PACKAGE_GIT_HOOK_PATH), copy_to)

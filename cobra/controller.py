@@ -6,13 +6,13 @@ from github import UnknownObjectException
 from tabulate import tabulate
 
 from cobra.conf.config import Config
-from cobra.project import Project
+from cobra.project import Project, create_project_parts
 from cobra.utils.command_line import get_params
 from cobra.utils.constants import Texts
 from cobra.utils.exceptions import ProjectNameAlreadyExists
 from cobra.utils.utils import get_object_from_list_by_name, ask_questions, user_password_dialog, \
     check_requirements, first_usage, get_github_user, check_env_exists, \
-    delete_path, create_files_folders, create_project_parts
+    delete_path, create_files_folders
 
 
 def main():
