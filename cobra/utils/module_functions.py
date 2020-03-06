@@ -9,7 +9,7 @@ from cobra.utils.utils import get_github_user
 class ModuleFunctions:
 
     @staticmethod
-    def create_folder(project):
+    def pull_repo(project):
         # pull repo
         print("Pulling the repo...")
         cwd = os.getcwd()

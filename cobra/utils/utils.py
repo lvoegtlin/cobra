@@ -107,19 +107,16 @@ def user_password_dialog(error=None):
 
 
 def duplication_check(project):
-    # [repo, folder, conda]
+    # [repo, pull, conda]
     res = []
     None if check_repo_exists('/'.join([project.repo_user, project.repo_name])) else res.append('create_repo')
-    None if check_folder_exists(project.repo_name) else res.append('create_folder')
+    None if check_git_pull() else res.append('pull_repo')
     None if check_env_exists(project.conda_name) else res.append('create_environment')
     return res
 
 
-def check_folder_exists(project_name):
-    # TODO check if this or the parent directory contains a .git folder and in this folder the origin file
-    #  which points to the repo
-    cwd = os.getcwd()
-    return os.path.isdir(os.path.join(cwd, project_name)) or os.path.basename(cwd) == project_name
+def check_git_pull():
+    return os.path.exists(os.path.join(os.getcwd(), '.git'))
 
 
 def check_repo_exists(full_repo_name):

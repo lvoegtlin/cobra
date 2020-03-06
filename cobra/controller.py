@@ -12,7 +12,7 @@ from cobra.utils.constants import Texts
 from cobra.utils.exceptions import ProjectNameAlreadyExists
 from cobra.utils.utils import get_object_from_list_by_name, ask_questions, user_password_dialog, \
     check_requirements, first_usage, get_github_user, check_env_exists, \
-    delete_path, create_files_folders
+    delete_path, create_files_folders, check_git_pull
 
 
 def main():
@@ -85,6 +85,12 @@ def create(name, python_version, from_file, **kwargs):
         project = Project.project_from_file()
         print(".cobra file found. Continue processing...")
         name = project.project_name
+
+        if os.path.basename(os.getcwd()) != project.repo_name:
+            delete_path(os.path.join(os.getcwd(), '.cobra'))
+            project.project_path = os.path.join(os.getcwd(), project.project_name)
+        else:
+            project.project_path = os.getcwd()
     else:
         project = Project(os.getcwd(),
                           name,
@@ -100,11 +106,16 @@ def create(name, python_version, from_file, **kwargs):
     # creat missing elements
     Project.create_project_parts(project, **kwargs)
 
-    # save file in cobra folder
     project.create_project_file()
 
     # save path, conda name, name, git link, python version into project file
     project.append_project()
+
+    print("****************************************************")
+    print("****************************************************")
+    print("Successfully created project {}".format(project.project_name))
+    print("****************************************************")
+    print("****************************************************")
 
 
 def listing(**kwargs):
@@ -154,9 +165,6 @@ def remove(name, folder, repo, conda, remove_all, **kwargs):
     if folder:
         delete_path(project.project_path)
         print("Successfully removed folders")
-    else:
-        delete_path(os.path.join(project.project_path, ".cobra"))
-        print("Removed .cobra file")
 
     if conda:
         if check_env_exists(project.conda_name):
