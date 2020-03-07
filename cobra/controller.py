@@ -6,7 +6,7 @@ from github import UnknownObjectException
 from tabulate import tabulate
 
 from cobra.conf.config import Config
-from cobra.project import Project, create_project_parts
+from cobra.project import Project
 from cobra.utils.command_line import get_params
 from cobra.utils.constants import Texts
 from cobra.utils.exceptions import ProjectNameAlreadyExists
@@ -85,6 +85,12 @@ def create(name, python_version, from_file, **kwargs):
         project = Project.project_from_file()
         print(".cobra file found. Continue processing...")
         name = project.project_name
+
+        if os.path.basename(os.getcwd()) != project.repo_name:
+            delete_path(os.path.join(os.getcwd(), '.cobra'))
+            project.project_path = os.path.join(os.getcwd(), project.project_name)
+        else:
+            project.project_path = os.getcwd()
     else:
         project = Project(os.getcwd(),
                           name,
@@ -98,13 +104,18 @@ def create(name, python_version, from_file, **kwargs):
     Project.project_exists(name)
 
     # creat missing elements
-    create_project_parts(project, **kwargs)
+    Project.create_project_parts(project, **kwargs)
 
-    # save file in cobra folder
     project.create_project_file()
 
     # save path, conda name, name, git link, python version into project file
     project.append_project()
+
+    print("****************************************************")
+    print("****************************************************")
+    print("Successfully created project {}".format(project.project_name))
+    print("****************************************************")
+    print("****************************************************")
 
 
 def listing(**kwargs):
@@ -154,9 +165,6 @@ def remove(name, folder, repo, conda, remove_all, **kwargs):
     if folder:
         delete_path(project.project_path)
         print("Successfully removed folders")
-    else:
-        delete_path(os.path.join(project.project_path, ".cobra"))
-        print("Removed .cobra file")
 
     if conda:
         if check_env_exists(project.conda_name):

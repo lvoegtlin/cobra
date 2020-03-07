@@ -2,7 +2,6 @@ import yaml
 
 
 class ConnectionType(yaml.YAMLObject):
-
     yaml_tag = u'!ConnectionType'
 
     def __init__(self, _name, _url):

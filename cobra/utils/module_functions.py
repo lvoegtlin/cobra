@@ -9,7 +9,7 @@ from cobra.utils.utils import get_github_user
 class ModuleFunctions:
 
     @staticmethod
-    def create_folder(project):
+    def pull_repo(project):
         # pull repo
         print("Pulling the repo...")
         cwd = os.getcwd()
@@ -32,4 +32,3 @@ class ModuleFunctions:
         arguments = ["--name", project.conda_name, "python={}".format(project.python_version)]
         # can not use conda api because it does not work
         os.system("conda create -y {}".format(' '.join(arguments)))
-

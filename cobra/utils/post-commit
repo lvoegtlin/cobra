@@ -25,7 +25,7 @@ git diff --exit-code --quiet ${ENVIRONMENT_FILE}
 if [[ $? -eq 0 ]] && [[ ! ${FIRST_RUN} ]]; then
     echo "Conda environment not changed. No additional commit."
 else
-    echo "Conda environment changed. Commiting new environment.yml"
+    echo "Conda environment changed. Committing new environment.yml"
     git add environment.yml
     git commit -m "Updating conda environment"
     exit 1

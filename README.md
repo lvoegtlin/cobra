@@ -129,7 +129,6 @@ optional arguments:
 ```
 
 ### TODO
-- [ ] Finish git hook
 - [ ] Create repo with template
 - [ ] Create conda Dockerfile
-- [ ] Automatically connect github with dockerhub for automatic build
+- [ ] Automatically build docker container and push it to dockerhub
