@@ -150,7 +150,7 @@ class Project(yaml.YAMLObject):
         MODULE_FUNCTIONS = dict(inspect.getmembers(ModuleFunctions, predicate=inspect.isfunction))
 
         for mask in check_mask:
-                MODULE_FUNCTIONS[mask](project)
+            MODULE_FUNCTIONS[mask](project)
 
         if git_hook:
             copy_to = os.path.join(project.project_path, '.git', 'hooks', 'post-commit')

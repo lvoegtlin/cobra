@@ -8,7 +8,6 @@ from cobra.vcs import VCS
 
 
 class Config(yaml.YAMLObject):
-
     __instance = None
     yaml_tag = u'!Config'
 
@@ -21,7 +20,6 @@ class Config(yaml.YAMLObject):
         self.user_password_domain = "cobra_user_sec"
         self.username = _username
         self.sec = ''
-
 
     # GETTER / SETTER
     @property

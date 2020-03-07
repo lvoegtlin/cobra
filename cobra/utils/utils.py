@@ -178,4 +178,3 @@ def delete_path(path: str):
         except PermissionError:
             print("Permission error for deleting the folder."
                   " Please delete it by hand or try again.")
-

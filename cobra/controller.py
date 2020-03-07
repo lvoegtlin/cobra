@@ -12,7 +12,7 @@ from cobra.utils.constants import Texts
 from cobra.utils.exceptions import ProjectNameAlreadyExists
 from cobra.utils.utils import get_object_from_list_by_name, ask_questions, user_password_dialog, \
     check_requirements, first_usage, get_github_user, check_env_exists, \
-    delete_path, create_files_folders, check_git_pull
+    delete_path, create_files_folders
 
 
 def main():
