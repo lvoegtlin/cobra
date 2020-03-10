@@ -29,6 +29,10 @@ class ModuleFunctions:
     def create_environment(project):
         # create conda
         print("Creating conda environment...")
-        arguments = ["--name", project.conda_name, "python={}".format(project.python_version)]
+        if os.path.exists(os.path.join(project.project_path, "environment.yml")):
+            print("Found environment.yml file...")
+            arguments = ["env", "create", "-f", os.path.join(project.project_path, "environment.yml")]
+        else:
+            arguments = ["create", "-y", "--name", project.conda_name, "python={}".format(project.python_version)]
         # can not use conda api because it does not work
-        os.system("conda create -y {}".format(' '.join(arguments)))
+        os.system("conda {}".format(' '.join(arguments)))

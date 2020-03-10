@@ -6,7 +6,7 @@ with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='cobra-projects',
-      version='0.1.9',
+      version='0.1.9alpha0',
       description='A tool to create and maintain your python projects',
       long_description=long_description,
       long_description_content_type='text/markdown',

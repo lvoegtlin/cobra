@@ -1,7 +1,7 @@
 import inspect
 import os
 import shutil
-
+import copy
 import pkg_resources
 import yaml
 
@@ -28,7 +28,9 @@ class Project(yaml.YAMLObject):
 
     def create_project_file(self):
         with open(os.path.join(self.project_path, ".cobra"), 'w') as f:
-            yaml.dump(self, f)
+            obj_copy = copy.deepcopy(self)
+            del obj_copy._project_path
+            yaml.dump(obj_copy, f)
 
     def append_project(self):
         yaml_dict = Project.project_exists(self.project_name)
