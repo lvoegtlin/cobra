@@ -5,8 +5,8 @@ class Paths:
     COBRA_FOLDER = os.path.expanduser("~/.cobra")
     CONF_FILE_PATH = os.path.join(COBRA_FOLDER, "config")
     PROJECT_FILE_PATH = os.path.join(COBRA_FOLDER, "projects")
-    PACKAGE_VCS_PATH = '/vcs.yml'
-    PACKAGE_GIT_HOOK_PATH = '/'.join(('utils', 'post-commit'))
+    PACKAGE_VCS_PATH = os.path.sep + 'vcs.yml'
+    PACKAGE_GIT_HOOK_PATH = os.path.join('utils', 'post-commit')
 
 
 class Structures:
