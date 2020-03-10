@@ -1,10 +1,10 @@
+import copy
 import inspect
 import os
 import shutil
-import copy
+
 import pkg_resources
 import yaml
-
 from cobra.utils.constants import Paths
 from cobra.utils.exceptions import ProjectNameAlreadyExists, NoCobraFileFound
 from cobra.utils.module_functions import ModuleFunctions
