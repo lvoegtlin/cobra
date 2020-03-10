@@ -88,7 +88,7 @@ def create(name, python_version, from_file, **kwargs):
 
         if os.path.basename(os.getcwd()) != project.repo_name:
             delete_path(os.path.join(os.getcwd(), '.cobra'))
-            project.project_path = os.path.join(os.getcwd(), project.project_name)
+            project.project_path = os.path.join(os.getcwd(), project.repo_name)
         else:
             project.project_path = os.getcwd()
     else:
