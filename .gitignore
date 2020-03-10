@@ -79,3 +79,5 @@ output/
 /conda_builds/
 
 dev.sh
+
+.pytest_cache
