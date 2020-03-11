@@ -1,3 +1,4 @@
+from cobra.conf.config import Config
 from cobra.utils.utils import first_usage, check_git_pull, create_files_folders, delete_path
 from cobra.utils.constants import Paths
 
@@ -56,3 +57,45 @@ class TestUtils:
         assert os.path.exists(dummy_file.__str__())
         delete_path(dummy_file.__str__())
         assert not os.path.exists(dummy_file.__str__())
+
+
+class TestConfig:
+    def test_get_instance(self):
+        config1 = Config.getInstance()
+        config2 = Config.getInstance()
+        assert config1 == config2
+
+    def test_load_config(self, tmp_path, monkeypatch):
+        config_content = """!Config
+                            _connection_type: &id001 !ConnectionType
+                              _name: ssh
+                              _url: 'git@github.com:'
+                            _used_vcs: !VCS
+                              _connection_types:
+                              - !ConnectionType
+                                _name: https
+                                _url: https://github.com/
+                              - *id001
+                              _name: Github
+                            _username: testUser"""
+
+        conf_file_path = tmp_path / "config"
+        conf_file_path.write_text(config_content)
+
+        monkeypatch.setattr(Paths, "CONF_FILE_PATH", conf_file_path.__str__())
+
+        conf = Config.getInstance()
+        # overwrite the cred loading by a empty method
+        conf.__load_user_cred = lambda: ""
+
+        conf.load_config()
+        conf._sec = "testSec"
+        assert conf.used_vcs.name == "Github"
+        assert conf.connection_type.name == "ssh"
+        assert conf.connection_type.url == "git@github.com:"
+        assert conf.username == "testUser"
+        assert conf._sec == "testSec"
+
+    def test_save_config(self):
+        assert False
+
