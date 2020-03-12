@@ -1,4 +1,5 @@
 from cobra.conf.config import Config
+from cobra.connenction_types import ConnectionType
 from cobra.utils.utils import first_usage, check_git_pull, create_files_folders, delete_path
 from cobra.utils.constants import Paths
 
@@ -96,6 +97,25 @@ class TestConfig:
         assert conf.username == "testUser"
         assert conf._sec == "testSec"
 
-    def test_save_config(self):
-        assert False
+    def test_save_config(self, tmp_path, monkeypatch):
+        conf = Config.getInstance()
 
+        conf_file_path = tmp_path / "config"
+
+        conf.username = "Test"
+        conf.connection_type = ConnectionType("TestConType", "TestUrl")
+
+        monkeypatch.setattr(Paths, "CONF_FILE_PATH", conf_file_path.__str__())
+
+        conf.save_config()
+
+        import os
+        assert os.path.exists(conf_file_path.__str__())
+
+        import yaml
+        with open(conf_file_path.__str__(), 'r') as f:
+            config = yaml.load(f, Loader=yaml.Loader)
+            assert config.username == "Test"
+            assert config.connection_type.name == "TestConType"
+            assert config.connection_type.url == "TestUrl"
+            assert config.used_vcs is None
