@@ -1,3 +1,4 @@
+import pytest
 from cobra.conf.config import Config
 from cobra.connenction_types import ConnectionType
 from cobra.utils.utils import first_usage, check_git_pull, create_files_folders, delete_path
@@ -66,6 +67,7 @@ class TestConfig:
         config2 = Config.getInstance()
         assert config1 == config2
 
+    @pytest.fixture(scope="session")
     def test_load_config(self, tmp_path, monkeypatch):
         config_content = """!Config
                             _connection_type: &id001 !ConnectionType
@@ -97,6 +99,7 @@ class TestConfig:
         assert conf.username == "testUser"
         assert conf._sec == "testSec"
 
+    @pytest.fixture(scope="session")
     def test_save_config(self, tmp_path, monkeypatch):
         conf = Config.getInstance()
 
