@@ -1,8 +1,8 @@
 import pytest
-from cobra.conf.config import Config
-from cobra.connenction_types import ConnectionType
-from cobra.utils.utils import first_usage, check_git_pull, create_files_folders, delete_path
-from cobra.utils.constants import Paths
+from src.cobra.conf.config import Config
+from src.cobra.connenction_types import ConnectionType
+from src.cobra.utils.utils import first_usage, check_git_pull, create_files_folders, delete_path
+from src.cobra.utils.constants import Paths
 
 
 class TestUtils:

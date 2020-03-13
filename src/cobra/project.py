@@ -5,10 +5,10 @@ import shutil
 
 import pkg_resources
 import yaml
-from cobra.utils.constants import Paths
-from cobra.utils.exceptions import ProjectNameAlreadyExists, NoCobraFileFound
-from cobra.utils.module_functions import ModuleFunctions
-from cobra.utils.utils import duplication_check
+from src.cobra.utils.constants import Paths
+from src.cobra.utils.exceptions import ProjectNameAlreadyExists, NoCobraFileFound
+from src.cobra.utils.module_functions import ModuleFunctions
+from src.cobra.utils.utils import duplication_check
 
 
 class Project(yaml.YAMLObject):

@@ -3,8 +3,8 @@ import yaml
 import keyring
 import pkg_resources
 
-from cobra.utils.constants import Paths
-from cobra.vcs import VCS
+from src.cobra.utils.constants import Paths
+from src.cobra.vcs import VCS
 
 
 class Config(yaml.YAMLObject):

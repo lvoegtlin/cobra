@@ -6,8 +6,8 @@ import sys
 
 from PyInquirer import prompt
 from github import Github, GithubException, UnknownObjectException
-from cobra.conf.config import Config
-from cobra.utils.constants import Texts, Structures, Paths
+from src.cobra.conf.config import Config
+from src.cobra.utils.constants import Texts, Structures, Paths
 
 
 def get_object_from_list_by_name(filter_str, input_list):
