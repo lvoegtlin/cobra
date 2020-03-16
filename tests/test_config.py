@@ -1,5 +1,3 @@
-import pytest
-
 from src.cobra.conf.config import Config
 from src.cobra.connenction_types import ConnectionType
 from src.cobra.utils.constants import Paths
@@ -11,7 +9,6 @@ class TestConfig:
         config2 = Config.getInstance()
         assert config1 == config2
 
-    @pytest.fixture(scope="session")
     def test_load_config(self, tmp_path, monkeypatch):
         config_content = """!Config
                             _connection_type: &id001 !ConnectionType
@@ -32,8 +29,6 @@ class TestConfig:
         monkeypatch.setattr(Paths, "CONF_FILE_PATH", conf_file_path.__str__())
 
         conf = Config.getInstance()
-        # overwrite the cred loading by a empty method
-        conf.__load_user_cred = lambda: ""
 
         conf.load_config()
         conf._sec = "testSec"
@@ -43,7 +38,6 @@ class TestConfig:
         assert conf.username == "testUser"
         assert conf._sec == "testSec"
 
-    @pytest.fixture(scope="session")
     def test_save_config(self, tmp_path, monkeypatch):
         conf = Config.getInstance()
 
@@ -65,4 +59,4 @@ class TestConfig:
             assert config.username == "Test"
             assert config.connection_type.name == "TestConType"
             assert config.connection_type.url == "TestUrl"
-            assert config.used_vcs is None
+            assert config.used_vcs.name == "Github"
