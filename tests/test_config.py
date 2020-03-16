@@ -1,3 +1,5 @@
+import os
+
 from src.cobra.conf.config import Config
 from src.cobra.connenction_types import ConnectionType
 from src.cobra.utils.constants import Paths
@@ -23,7 +25,7 @@ class TestConfig:
                               _name: Github
                             _username: testUser"""
 
-        conf_file_path = tmp_path / "config"
+        conf_file_path = tmp_path / "load_config"
         conf_file_path.write_text(config_content)
 
         monkeypatch.setattr(Paths, "CONF_FILE_PATH", conf_file_path.__str__())
@@ -37,11 +39,12 @@ class TestConfig:
         assert conf.connection_type.url == "git@github.com:"
         assert conf.username == "testUser"
         assert conf._sec == "testSec"
+        conf.used_vcs = None
 
     def test_save_config(self, tmp_path, monkeypatch):
         conf = Config.getInstance()
 
-        conf_file_path = tmp_path / "config"
+        conf_file_path = tmp_path / "save_config"
 
         conf.username = "Test"
         conf.connection_type = ConnectionType("TestConType", "TestUrl")
@@ -50,7 +53,6 @@ class TestConfig:
 
         conf.save_config()
 
-        import os
         assert os.path.exists(conf_file_path.__str__())
 
         import yaml
@@ -59,4 +61,4 @@ class TestConfig:
             assert config.username == "Test"
             assert config.connection_type.name == "TestConType"
             assert config.connection_type.url == "TestUrl"
-            assert config.used_vcs.name == "Github"
+            assert config.used_vcs is None
