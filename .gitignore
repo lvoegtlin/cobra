@@ -80,3 +80,4 @@ output/
 /conda_builds/
 
 dev.sh
+/tox_output.txt

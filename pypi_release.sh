@@ -1,13 +1,23 @@
 #!/bin/bash
 
-echo "clean up old builds..."
-rm -rf build
-rm -rf dist
+echo "running test with tox..."
+tox > tox_output.txt
 
-# build the dist and the wheel
-echo "build dist and wheel..."
-python setup.py sdist bdist_wheel
+if [[ $? -eq 0 ]]; then
+    echo "clean up old builds..."
+    rm -rf build
+    rm -rf dist
 
-# upload to pypi
-echo "upload to pypi..."
-twine upload dist/*
+    # build the dist and the wheel
+    clear
+    echo "build dist and wheel..."
+    python setup.py sdist bdist_wheel
+
+    # upload to pypi
+    clear
+    echo "upload to pypi..."
+#    twine upload dist/*
+else
+    clear
+    echo "TESTING WAS NOT SUCCESSFUL. Check tox_output.txt"
+fi
