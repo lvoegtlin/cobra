@@ -16,7 +16,7 @@ if [[ $? -eq 0 ]]; then
     # upload to pypi
     clear
     echo "upload to pypi..."
-#    twine upload dist/*
+    twine upload dist/*
 else
     clear
     echo "TESTING WAS NOT SUCCESSFUL. Check tox_output.txt"
