@@ -39,6 +39,7 @@ class TestConfig:
         assert conf.connection_type.url == "git@github.com:"
         assert conf.username == "testUser"
         assert conf._sec == "testSec"
+        assert conf.vcses[0].name == "Github"
         conf.used_vcs = None
 
     def test_save_config(self, tmp_path, monkeypatch):
