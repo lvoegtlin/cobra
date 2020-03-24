@@ -60,14 +60,6 @@ class Project(yaml.YAMLObject):
             return yaml.load(f, Loader=yaml.Loader) or None
 
     @staticmethod
-    def save_projects(projects: list):
-        with open(Paths.PROJECT_FILE_PATH, 'r') as f:
-            yaml_dict = yaml.safe_load(f) or {}
-        yaml_dict.update(projects)
-        with open(Paths.PROJECT_FILE_PATH, 'w') as f:
-            yaml.dump(yaml_dict, f)
-
-    @staticmethod
     def project_exists(project_name: str):
         with open(Paths.PROJECT_FILE_PATH, 'r') as f:
             yaml_dict = yaml.load(f, Loader=yaml.Loader)
