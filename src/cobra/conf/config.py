@@ -3,8 +3,8 @@ import yaml
 import keyring
 import pkg_resources
 
-from cobra.utils.constants import Paths
-from cobra.vcs import VCS
+from src.cobra.utils.constants import Paths
+from src.cobra.vcs import VCS
 
 
 class Config(yaml.YAMLObject):
@@ -79,12 +79,12 @@ class Config(yaml.YAMLObject):
             for k, v in vcs_list.items():
                 self._vcses.append(VCS(k, v['connection_types']))
 
+    def __load_user_cred(self):
+        self._sec = keyring.get_password(self.user_password_domain, self.username)
+
     # PUBLIC
     def save_user_cred(self):
         keyring.set_password(self.user_password_domain, self.username, self.sec)
-
-    def __load_user_cred(self):
-        self._sec = keyring.get_password(self.user_password_domain, self.username)
 
     def load_config(self):
         with open(Paths.CONF_FILE_PATH, 'r') as f:

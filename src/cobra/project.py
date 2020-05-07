@@ -1,14 +1,14 @@
+import copy
 import inspect
 import os
 import shutil
-import copy
+
 import pkg_resources
 import yaml
-
-from cobra.utils.constants import Paths
-from cobra.utils.exceptions import ProjectNameAlreadyExists, NoCobraFileFound
-from cobra.utils.module_functions import ModuleFunctions
-from cobra.utils.utils import duplication_check
+from src.cobra.utils.constants import Paths
+from src.cobra.utils.exceptions import ProjectNameAlreadyExists, NoCobraFileFound
+from src.cobra.utils.module_functions import ModuleFunctions
+from src.cobra.utils.utils import duplication_check
 
 
 class Project(yaml.YAMLObject):
@@ -58,14 +58,6 @@ class Project(yaml.YAMLObject):
     def get_projects():
         with open(Paths.PROJECT_FILE_PATH, 'r') as f:
             return yaml.load(f, Loader=yaml.Loader) or None
-
-    @staticmethod
-    def save_projects(projects: list):
-        with open(Paths.PROJECT_FILE_PATH, 'r') as f:
-            yaml_dict = yaml.safe_load(f) or {}
-        yaml_dict.update(projects)
-        with open(Paths.PROJECT_FILE_PATH, 'w') as f:
-            yaml.dump(yaml_dict, f)
 
     @staticmethod
     def project_exists(project_name: str):

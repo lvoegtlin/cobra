@@ -1,0 +1,10 @@
+name: cobra_dev
+channels:
+  - conda-forge
+  - defaults
+  - ak_93
+  - ecrop
+dependencies:
+  - python=3.6
+  - nose
+prefix: /Users/voegtlil/miniconda3/envs/cobra_dev

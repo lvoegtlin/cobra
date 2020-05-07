@@ -1,5 +1,6 @@
-from cobra.connenction_types import ConnectionType
 import yaml
+
+from src.cobra.connenction_types import ConnectionType
 
 
 class VCS(yaml.YAMLObject):
