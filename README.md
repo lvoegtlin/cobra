@@ -140,6 +140,18 @@ Then you can test the whole program including test coverage (htmlcov/index.html)
 tox
 ```
 
+### Cite us
+```
+@inproceedings{voegtlin2020cobra,
+    address = {Sydney, Australia},
+    author = {Voegtlin, Lars and  Pondenkandath, Vinaychandran and Ingold, Rolf},
+    title = {{Cobra: A CLI Tool To Create And Share Reproducible Projects}},
+    booktitle = {2020 7th Swiss Conference on Data Science (SDS)},
+    year = {2020},
+    month = {jun},
+}
+```
+
 ### TODO
 - [ ] Create repo with template
 - [ ] Create conda Dockerfile
