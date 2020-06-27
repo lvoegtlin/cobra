@@ -143,7 +143,7 @@ tox
 ### Cite us
 ```
 @inproceedings{voegtlin2020cobra,
-    address = {Sydney, Australia},
+    address = {Online},
     author = {Voegtlin, Lars and  Pondenkandath, Vinaychandran and Ingold, Rolf},
     title = {{Cobra: A CLI Tool To Create And Share Reproducible Projects}},
     booktitle = {2020 7th Swiss Conference on Data Science (SDS)},
