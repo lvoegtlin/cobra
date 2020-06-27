@@ -140,7 +140,7 @@ Then you can test the whole program including test coverage (htmlcov/index.html)
 tox
 ```
 
-### Cite us
+## Cite us
 ```
 @inproceedings{voegtlin2020cobra,
     address = {Online},
