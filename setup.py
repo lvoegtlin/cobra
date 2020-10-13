@@ -16,7 +16,7 @@ setup(name='cobra-projects',
       license='MIT',
       packages=find_packages(exclude=['build', 'dist']),
       entry_points={
-          'console_scripts': ['cobra=cobra.controller:entry_point'],
+          'console_scripts': ['cobra=src.cobra.controller:entry_point'],
       },
       include_package_data=True,
       package_data={'': ['*.yml', 'post-commit']},

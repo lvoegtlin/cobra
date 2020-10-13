@@ -128,18 +128,6 @@ optional arguments:
 
 ```
 
-### Testing
-To do testing you have to create the conda environment test_environment.yml and activate it:
-```
-conda env create -f test_environment.yml
-conda activate cobra_dev
-```
-
-Then you can test the whole program including test coverage (htmlcov/index.html) with:
-```
-tox
-```
-
 ### TODO
 - [ ] Create repo with template
 - [ ] Create conda Dockerfile
