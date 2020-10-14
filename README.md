@@ -128,6 +128,30 @@ optional arguments:
 
 ```
 
+### Testing
+To do testing you have to create the conda environment test_environment.yml and activate it:
+```
+conda env create -f test_environment.yml
+conda activate cobra_dev
+```
+
+Then you can test the whole program including test coverage (htmlcov/index.html) with:
+```
+tox
+```
+
+## Cite us
+```
+@inproceedings{voegtlin2020cobra,
+    address = {Online},
+    author = {Voegtlin, Lars and  Pondenkandath, Vinaychandran and Ingold, Rolf},
+    title = {{Cobra: A CLI Tool To Create And Share Reproducible Projects}},
+    booktitle = {2020 7th Swiss Conference on Data Science (SDS)},
+    year = {2020},
+    month = {jun},
+}
+```
+
 ### TODO
 - [ ] Create repo with template
 - [ ] Create conda Dockerfile
