@@ -6,7 +6,7 @@ with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='cobra-projects',
-      version='0.1.9alpha0',
+      version='0.1.9alpha2',
       description='A tool to create and maintain your python projects',
       long_description=long_description,
       long_description_content_type='text/markdown',
@@ -16,7 +16,7 @@ setup(name='cobra-projects',
       license='MIT',
       packages=find_packages(exclude=['build', 'dist']),
       entry_points={
-          'console_scripts': ['cobra=cobra.controller:entry_point'],
+          'console_scripts': ['cobra=src.cobra.controller:entry_point'],
       },
       include_package_data=True,
       package_data={'': ['*.yml', 'post-commit']},
