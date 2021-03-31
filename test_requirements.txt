@@ -25,7 +25,7 @@ pluggy==0.13.1
 prompt-toolkit==1.0.14
 py==1.8.1
 PyGithub==1.43.6
-Pygments==2.6.1
+Pygments==2.7.4
 PyInquirer==1.0.3
 PyJWT==1.7.1
 pyparsing==2.4.7
