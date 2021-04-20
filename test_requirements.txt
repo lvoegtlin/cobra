@@ -23,7 +23,7 @@ packaging==20.4
 pkginfo==1.5.0.1
 pluggy==0.13.1
 prompt-toolkit==1.0.14
-py==1.8.1
+py==1.10.0
 PyGithub==1.43.6
 Pygments==2.7.4
 PyInquirer==1.0.3
