@@ -27,7 +27,7 @@ py==1.10.0
 PyGithub==1.43.6
 Pygments==2.7.4
 PyInquirer==1.0.3
-PyJWT==1.7.1
+PyJWT==2.4.0
 pyparsing==2.4.7
 pytest==5.3.5
 pytest-cov==2.8.1
