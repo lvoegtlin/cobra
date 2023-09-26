@@ -21,6 +21,6 @@ setup(name='cobra-projects',
       include_package_data=True,
       package_data={'': ['*.yml', 'post-commit']},
       install_requires=['keyring==19.0.1', 'pyyaml==5.4', 'PyInquirer==1.0.3', 'prompt_toolkit==1.0.14',
-                        'pygithub==1.43.6', 'gitpython==3.1.30', 'tabulate==0.8.5', 'readme-renderer>=21.0'],
+                        'pygithub==1.43.6', 'gitpython==3.1.34', 'tabulate==0.8.5', 'readme-renderer>=21.0'],
       python_requires='>=3.6',
       zip_safe=False)
