@@ -44,7 +44,7 @@ toml==0.10.0
 tox==3.14.5
 tox-interpreters==0.1.0
 tox-run-before==0.1
-tqdm==4.50.2
+tqdm==4.66.3
 twine==3.2.0
 urllib3==1.26.18
 virtualenv==20.0.10
